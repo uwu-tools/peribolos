@@ -28,7 +28,7 @@ require (
 	github.com/google/go-cmp v0.5.6
 	github.com/sirupsen/logrus v1.8.1
 	k8s.io/apimachinery v0.22.2
-	k8s.io/test-infra v0.0.0-20210730160938-8ad9b8c53bd8
+	k8s.io/test-infra v0.0.0-20211218174124-6dca84ec84b2
 	sigs.k8s.io/yaml v1.2.0
 )
 
