@@ -2,32 +2,13 @@ module github.com/relengfam/peribolos
 
 go 1.18
 
-replace github.com/golang/lint => golang.org/x/lint v0.0.0-20190301231843-5614ed5bae6f
-
-// Pin all k8s.io staging repositories to kubernetes v0.18.6
-// When bumping Kubernetes dependencies, you should update each of these lines
-// to point to the same kubernetes v0.KubernetesMinor.KubernetesPatch version
-// before running update-deps.sh.
-replace (
-	cloud.google.com/go/pubsub => cloud.google.com/go/pubsub v1.3.1
-	github.com/Azure/go-autorest => github.com/Azure/go-autorest v14.2.0+incompatible
-	github.com/googleapis/gnostic => github.com/googleapis/gnostic v0.4.1
-
-	// Upstream is unmaintained. This fork introduces two important changes:
-	// * We log an error if writing a cache key fails (e.G. because disk is full)
-	// * We inject a header that allows ghproxy to detect if the response was revalidated or a cache miss
-	github.com/gregjones/httpcache => github.com/alvaroaleman/httpcache v0.0.0-20210618195546-ab9a1a3f8a38
-
-	golang.org/x/lint => golang.org/x/lint v0.0.0-20190409202823-959b441ac422
-	gopkg.in/yaml.v3 => gopkg.in/yaml.v3 v3.0.0-20190709130402-674ba3eaed22
-	k8s.io/client-go => k8s.io/client-go v0.22.2
-)
+replace k8s.io/client-go => k8s.io/client-go v0.22.5
 
 require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.5.6
 	github.com/sirupsen/logrus v1.8.1
-	k8s.io/apimachinery v0.22.2
+	k8s.io/apimachinery v0.22.5
 	k8s.io/test-infra v0.0.0-20211218174124-6dca84ec84b2
 	sigs.k8s.io/yaml v1.2.0
 )
@@ -94,7 +75,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/net v0.0.0-20210520170846-37e1c6afe023 // indirect
+	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20210817190340-bfb29a6856f2 // indirect
@@ -112,11 +93,12 @@ require (
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	k8s.io/api v0.22.2 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	k8s.io/api v0.22.5 // indirect
 	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible // indirect
 	k8s.io/component-base v0.22.2 // indirect
 	k8s.io/klog/v2 v2.9.0 // indirect
-	k8s.io/kube-openapi v0.0.0-20210421082810-95288971da7e // indirect
+	k8s.io/kube-openapi v0.0.0-20211109043538-20434351676c // indirect
 	k8s.io/utils v0.0.0-20210819203725-bdf08cb9a70a // indirect
 	knative.dev/pkg v0.0.0-20200711004937-22502028e31a // indirect
 	sigs.k8s.io/controller-runtime v0.10.3 // indirect
