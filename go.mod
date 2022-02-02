@@ -9,7 +9,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	k8s.io/apimachinery v0.22.5
 	k8s.io/test-infra v0.0.0-20211221011455-3d87616db8ae
-	sigs.k8s.io/yaml v1.2.0
+	sigs.k8s.io/yaml v1.3.0
 )
 
 require (
