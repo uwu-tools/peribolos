@@ -17,13 +17,14 @@ limitations under the License.
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strconv"
 	"strings"
 
+	actions "github.com/sethvargo/go-githubactions"
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/yaml"
@@ -72,92 +73,147 @@ type options struct {
 
 func parseOptions() options {
 	var o options
+
 	if err := o.parseArgs(flag.CommandLine, os.Args[1:]); err != nil {
 		logrus.Fatalf("Invalid flags: %v", err)
 	}
+
+	o.dump = actions.GetInput("dump")
+	o.config = actions.GetInput("config-path")
+
+	dumpFull := actions.GetInput("dump-full")
+	if dumpFull != "" {
+		o.dumpFull, _ = strconv.ParseBool(dumpFull)
+	}
+
+	confirm := actions.GetInput("confirm")
+	if confirm != "" {
+		o.confirm, _ = strconv.ParseBool(confirm)
+	}
+
+	o.github.TokenPath = actions.GetInput("github-token-path")
+	if o.github.TokenPath == "" {
+		actions.Fatalf("missing 'github-token-path'")
+	}
+
+	fixOrg := actions.GetInput("fix-org")
+	if fixOrg != "" {
+		o.fixOrg, _ = strconv.ParseBool(fixOrg)
+	}
+
+	fixOrgMembers := actions.GetInput("fix-org-members")
+	if fixOrgMembers != "" {
+		o.fixOrgMembers, _ = strconv.ParseBool(fixOrgMembers)
+	}
+
+	fixTeams := actions.GetInput("fix-teams")
+	if fixTeams != "" {
+		o.fixTeams, _ = strconv.ParseBool(fixTeams)
+	}
+
+	fixTeamMembers := actions.GetInput("fix-teams-members")
+	if fixTeamMembers != "" {
+		o.fixTeamMembers, _ = strconv.ParseBool(fixTeamMembers)
+	}
+
+	fixTeamRepos := actions.GetInput("fix-team-repos")
+	if fixTeamRepos != "" {
+		o.fixTeamRepos, _ = strconv.ParseBool(fixTeamRepos)
+	}
+
+	fixRepos := actions.GetInput("fix-repos")
+	if fixRepos != "" {
+		o.fixRepos, _ = strconv.ParseBool(fixRepos)
+	}
+
+	o.minAdmins = defaultMinAdmins
+	minAdmins := actions.GetInput("min-admins")
+	if minAdmins != "" {
+		o.minAdmins, _ = strconv.Atoi(minAdmins)
+	}
+
+	requireSelf := actions.GetInput("require-self")
+	if requireSelf != "" {
+		o.requireSelf, _ = strconv.ParseBool(requireSelf)
+	}
+
+	o.github.ThrottleHourlyTokens = defaultTokens
+	throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
+	if throttleHourlyTokens != "" {
+		o.github.ThrottleHourlyTokens, _ = strconv.Atoi(throttleHourlyTokens)
+	}
+
+	o.github.ThrottleAllowBurst = defaultBurst
+	throttleAllowBurst := actions.GetInput("github-allowed-burst")
+	if throttleHourlyTokens != "" {
+		o.github.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
+	}
+
+	o.github.Host = github.DefaultHost
+
+	o.logLevel = logrus.InfoLevel.String()
+	logLevel := actions.GetInput("log-level")
+	if logLevel != "" {
+		o.logLevel = logLevel
+	}
+
+	if err := o.github.Validate(!o.confirm); err != nil {
+		actions.Fatalf(err.Error())
+	}
+
+	if o.minAdmins < 2 {
+		actions.Fatalf("--min-admins=%d must be at least 2", o.minAdmins)
+	}
+
+	if o.maximumDelta > 1 || o.maximumDelta < 0 {
+		actions.Fatalf("--maximum-removal-delta=%f must be a non-negative number less than 1.0", o.maximumDelta)
+	}
+
+	if o.confirm && o.dump != "" {
+		actions.Fatalf("--confirm cannot be used with --dump=%s", o.dump)
+	}
+	if o.config == "" && o.dump == "" {
+		actions.Fatalf("--config-path or --dump required")
+	}
+	if o.config != "" && o.dump != "" {
+		actions.Fatalf("--config-path=%s and --dump=%s cannot both be set", o.config, o.dump)
+	}
+
+	if o.dumpFull && o.dump == "" {
+		actions.Fatalf("--dump-full can't be used without --dump")
+	}
+
+	if o.fixTeamMembers && !o.fixTeams {
+		actions.Fatalf("--fix-team-members requires --fix-teams")
+	}
+
+	if o.fixTeamRepos && !o.fixTeams {
+		actions.Fatalf("--fix-team-repos requires --fix-teams")
+	}
+
+	level, err := logrus.ParseLevel(o.logLevel)
+	if err != nil {
+		actions.Fatalf("--log-level invalid: %w", err)
+	}
+	logrus.SetLevel(level)
+
+	// TODO: get the missing flags
+	// flags.Var(&o.requiredAdmins, "required-admins", "Ensure config specifies these users as admins")
+	// flags.Float64Var(&o.maximumDelta, "maximum-removal-delta", defaultDelta, "Fail if config removes more than this fraction of current members")
+	// flags.BoolVar(&o.ignoreSecretTeams, "ignore-secret-teams", false, "Do not dump or update secret teams if set")
+	// flags.BoolVar(&o.allowRepoArchival, "allow-repo-archival", false, "If set, archiving repos is allowed while updating repos")
+	// flags.BoolVar(&o.allowRepoPublish, "allow-repo-publish", false, "If set, making private repos public is allowed while updating repos")
+	// o.github.AddCustomizedFlags(flags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
+
 	return o
 }
 
 func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 	o.requiredAdmins = flagutil.NewStrings()
-	flags.Var(&o.requiredAdmins, "required-admins", "Ensure config specifies these users as admins")
-	flags.IntVar(&o.minAdmins, "min-admins", defaultMinAdmins, "Ensure config specifies at least this many admins")
-	flags.BoolVar(&o.requireSelf, "require-self", true, "Ensure --github-token-path user is an admin")
-	flags.Float64Var(&o.maximumDelta, "maximum-removal-delta", defaultDelta, "Fail if config removes more than this fraction of current members")
-	flags.StringVar(&o.config, "config-path", "", "Path to org config.yaml")
-	flags.BoolVar(&o.confirm, "confirm", false, "Mutate github if set")
-	flags.IntVar(&o.tokensPerHour, "tokens", defaultTokens, "Throttle hourly token consumption (0 to disable) DEPRECATED: use --github-hourly-tokens")
-	flags.IntVar(&o.tokenBurst, "token-burst", defaultBurst, "Allow consuming a subset of hourly tokens in a short burst. DEPRECATED: use --github-allowed-burst")
-	flags.StringVar(&o.dump, "dump", "", "Output current config of this org if set")
-	flags.BoolVar(&o.dumpFull, "dump-full", false, "Output current config of the org as a valid input config file instead of a snippet")
-	flags.BoolVar(&o.ignoreSecretTeams, "ignore-secret-teams", false, "Do not dump or update secret teams if set")
-	flags.BoolVar(&o.fixOrg, "fix-org", false, "Change org metadata if set")
-	flags.BoolVar(&o.fixOrgMembers, "fix-org-members", false, "Add/remove org members if set")
-	flags.BoolVar(&o.fixTeams, "fix-teams", false, "Create/delete/update teams if set")
-	flags.BoolVar(&o.fixTeamMembers, "fix-team-members", false, "Add/remove team members if set")
-	flags.BoolVar(&o.fixTeamRepos, "fix-team-repos", false, "Add/remove team permissions on repos if set")
-	flags.BoolVar(&o.fixRepos, "fix-repos", false, "Create/update repositories if set")
-	flags.BoolVar(&o.allowRepoArchival, "allow-repo-archival", false, "If set, archiving repos is allowed while updating repos")
-	flags.BoolVar(&o.allowRepoPublish, "allow-repo-publish", false, "If set, making private repos public is allowed while updating repos")
-	flags.StringVar(&o.logLevel, "log-level", logrus.InfoLevel.String(), fmt.Sprintf("Logging level, one of %v", logrus.AllLevels))
 	o.github.AddCustomizedFlags(flags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
 	if err := flags.Parse(args); err != nil {
 		return err
 	}
-
-	if o.tokensPerHour != defaultTokens {
-		if o.github.ThrottleHourlyTokens != defaultTokens {
-			return fmt.Errorf("--tokens cannot be specified with together with --github-hourly-tokens: use just the latter")
-		}
-		logrus.Warn("--tokens is deprecated: use --github-hourly-tokens instead")
-		o.github.ThrottleHourlyTokens = o.tokensPerHour
-	}
-	if o.tokenBurst != defaultBurst {
-		if o.github.ThrottleAllowBurst != defaultBurst {
-			return fmt.Errorf("--token-burst cannot be specified with together with --github-allowed-burst: use just the latter")
-		}
-		logrus.Warn("--token-burst is deprecated: use --github-allowed-burst instead")
-		o.github.ThrottleAllowBurst = o.tokenBurst
-	}
-
-	if err := o.github.Validate(!o.confirm); err != nil {
-		return err
-	}
-
-	if o.minAdmins < 2 {
-		return fmt.Errorf("--min-admins=%d must be at least 2", o.minAdmins)
-	}
-	if o.maximumDelta > 1 || o.maximumDelta < 0 {
-		return fmt.Errorf("--maximum-removal-delta=%f must be a non-negative number less than 1.0", o.maximumDelta)
-	}
-
-	if o.confirm && o.dump != "" {
-		return fmt.Errorf("--confirm cannot be used with --dump=%s", o.dump)
-	}
-	if o.config == "" && o.dump == "" {
-		return errors.New("--config-path or --dump required")
-	}
-	if o.config != "" && o.dump != "" {
-		return fmt.Errorf("--config-path=%s and --dump=%s cannot both be set", o.config, o.dump)
-	}
-
-	if o.dumpFull && o.dump == "" {
-		return errors.New("--dump-full can't be used without --dump")
-	}
-
-	if o.fixTeamMembers && !o.fixTeams {
-		return fmt.Errorf("--fix-team-members requires --fix-teams")
-	}
-
-	if o.fixTeamRepos && !o.fixTeams {
-		return fmt.Errorf("--fix-team-repos requires --fix-teams")
-	}
-
-	level, err := logrus.ParseLevel(o.logLevel)
-	if err != nil {
-		return fmt.Errorf("--log-level invalid: %w", err)
-	}
-	logrus.SetLevel(level)
 
 	return nil
 }
@@ -403,7 +459,7 @@ func configureOrgMembers(opt options, client orgClient, orgName string, orgConfi
 
 	// Sanity desired state
 	if n := len(wantAdmins); n < opt.minAdmins {
-		return fmt.Errorf("%s must specify at least %d admins, only found %d", orgName, opt.minAdmins, n)
+		actions.Fatalf("%s must specify at least %d admins, only found %d", orgName, opt.minAdmins, n)
 	}
 	var missing []string
 	for _, r := range opt.requiredAdmins.Strings() {

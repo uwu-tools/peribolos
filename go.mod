@@ -6,6 +6,7 @@ replace k8s.io/client-go => k8s.io/client-go v0.22.5
 
 require (
 	github.com/google/go-cmp v0.5.7
+	github.com/sethvargo/go-githubactions v0.5.3
 	github.com/sirupsen/logrus v1.8.1
 	k8s.io/apimachinery v0.22.5
 	k8s.io/test-infra v0.0.0-20211221011455-3d87616db8ae
