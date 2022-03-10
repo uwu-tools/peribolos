@@ -193,7 +193,7 @@ func parseOptions() options {
 
 	level, err := logrus.ParseLevel(o.logLevel)
 	if err != nil {
-		actions.Fatalf("--log-level invalid: %w", err)
+		actions.Fatalf("--log-level invalid: %s", err.Error())
 	}
 	logrus.SetLevel(level)
 
@@ -459,7 +459,7 @@ func configureOrgMembers(opt options, client orgClient, orgName string, orgConfi
 
 	// Sanity desired state
 	if n := len(wantAdmins); n < opt.minAdmins {
-		actions.Fatalf("%s must specify at least %d admins, only found %d", orgName, opt.minAdmins, n)
+		return fmt.Errorf("%s must specify at least %d admins, only found %d", orgName, opt.minAdmins, n)
 	}
 	var missing []string
 	for _, r := range opt.requiredAdmins.Strings() {
