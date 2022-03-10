@@ -22,6 +22,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/caarlos0/env/v6"
 	actions "github.com/sethvargo/go-githubactions"
 	"github.com/sirupsen/logrus"
 	"k8s.io/test-infra/prow/flagutil"
@@ -35,7 +36,6 @@ const (
 	defaultBurst     = 100
 
 	// Flags.
-	flagActions           = "actions"
 	flagRequiredAdmins    = "required-admins"
 	flagMinAdmins         = "min-admins"
 	flagRequireSelf       = "require-self"
@@ -59,7 +59,10 @@ const (
 )
 
 type options struct {
-	actions           bool
+	// Infer if peribolos is running in a GitHub Action.
+	// The `CI` environment variable will always be set to "true" in a GitHub Action.
+	// ref: https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
+	usingActions      bool `env:"CI"`
 	config            string
 	confirm           bool
 	dump              string
@@ -87,7 +90,12 @@ type options struct {
 }
 
 func newOptions() *options {
-	return &options{}
+	o := &options{}
+	if err := env.Parse(o); err != nil {
+		fmt.Printf("could not parse env vars, using default options: %v", err)
+	}
+
+	return o
 }
 
 func parseOptions() options {
@@ -101,13 +109,6 @@ func parseOptions() options {
 
 func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 	o.requiredAdmins = flagutil.NewStrings()
-
-	flags.BoolVar(
-		&o.actions,
-		flagActions,
-		true,
-		"Run as GitHub Action and collect the flags using Actions syntax, if you want to run as standard command see --actions to false",
-	)
 
 	flags.Var(
 		&o.requiredAdmins,
@@ -261,7 +262,7 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 	// TODO(flags): Consider parameterizing flag.
 	o.github.ThrottleAllowBurst = defaultBurst
 
-	if o.actions {
+	if o.usingActions {
 		fmt.Printf("Running in GitHub Actions environment")
 		err := o.parseFromAction()
 		if err != nil {
