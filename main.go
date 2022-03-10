@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -131,7 +132,7 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 		&o.requireSelf,
 		flagRequireSelf,
 		true,
-		"Ensure --github-token-path user is an admin",
+		"Ensure github token path user is an admin",
 	)
 
 	flags.Float64Var(
@@ -258,88 +259,9 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 		return err
 	}
 
-	if o.actions {
-		o.dump = actions.GetInput(flagDump)
-		o.config = actions.GetInput(flagConfigPath)
-
-		dumpFull := actions.GetInput(flagDumpFull)
-		if dumpFull != "" {
-			o.dumpFull, _ = strconv.ParseBool(dumpFull)
-		}
-
-		confirm := actions.GetInput(flagConfirm)
-		if confirm != "" {
-			o.confirm, _ = strconv.ParseBool(confirm)
-		}
-
-		// TODO(flags): Consider parameterizing flag.
-		o.github.TokenPath = actions.GetInput("github-token-path")
-		if o.github.TokenPath == "" {
-			return fmt.Errorf("missing 'github-token-path'")
-		}
-
-		fixOrg := actions.GetInput(flagFixOrg)
-		if fixOrg != "" {
-			o.fixOrg, _ = strconv.ParseBool(fixOrg)
-		}
-
-		fixOrgMembers := actions.GetInput(flagFixOrgMembers)
-		if fixOrgMembers != "" {
-			o.fixOrgMembers, _ = strconv.ParseBool(fixOrgMembers)
-		}
-
-		fixTeams := actions.GetInput(flagFixTeams)
-		if fixTeams != "" {
-			o.fixTeams, _ = strconv.ParseBool(fixTeams)
-		}
-
-		fixTeamMembers := actions.GetInput(flagFixTeamMembers)
-		if fixTeamMembers != "" {
-			o.fixTeamMembers, _ = strconv.ParseBool(fixTeamMembers)
-		}
-
-		fixTeamRepos := actions.GetInput(flagFixTeamRepos)
-		if fixTeamRepos != "" {
-			o.fixTeamRepos, _ = strconv.ParseBool(fixTeamRepos)
-		}
-
-		fixRepos := actions.GetInput(flagFixRepos)
-		if fixRepos != "" {
-			o.fixRepos, _ = strconv.ParseBool(fixRepos)
-		}
-
-		o.minAdmins = defaultMinAdmins
-		minAdmins := actions.GetInput(flagMinAdmins)
-		if minAdmins != "" {
-			o.minAdmins, _ = strconv.Atoi(minAdmins)
-		}
-
-		requireSelf := actions.GetInput(flagRequireSelf)
-		if requireSelf != "" {
-			o.requireSelf, _ = strconv.ParseBool(requireSelf)
-		}
-
-		// TODO(flags): Consider parameterizing flag.
-		o.github.ThrottleHourlyTokens = defaultTokens
-		throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
-		if throttleHourlyTokens != "" {
-			o.github.ThrottleHourlyTokens, _ = strconv.Atoi(throttleHourlyTokens)
-		}
-
-		// TODO(flags): Consider parameterizing flag.
-		o.github.ThrottleAllowBurst = defaultBurst
-		throttleAllowBurst := actions.GetInput("github-allowed-burst")
-		if throttleHourlyTokens != "" {
-			o.github.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
-		}
-
-		o.github.Host = github.DefaultHost
-
-		o.logLevel = logrus.InfoLevel.String()
-		logLevel := actions.GetInput(flagLogLevel)
-		if logLevel != "" {
-			o.logLevel = logLevel
-		}
+	err := o.parseFromAction()
+	if err != nil {
+		return fmt.Errorf("parsing from Action: %w", err)
 	}
 
 	if err := o.github.Validate(!o.confirm); err != nil {
@@ -433,6 +355,96 @@ func main() {
 		}
 	}
 	logrus.Info("Finished syncing configuration.")
+}
+
+func (o *options) parseFromAction() error {
+	if !o.actions {
+		return errors.New("cannot parse options from action in a non-Actions environment")
+	}
+
+	o.dump = actions.GetInput(flagDump)
+	o.config = actions.GetInput(flagConfigPath)
+
+	dumpFull := actions.GetInput(flagDumpFull)
+	if dumpFull != "" {
+		o.dumpFull, _ = strconv.ParseBool(dumpFull)
+	}
+
+	confirm := actions.GetInput(flagConfirm)
+	if confirm != "" {
+		o.confirm, _ = strconv.ParseBool(confirm)
+	}
+
+	// TODO(flags): Consider parameterizing flag.
+	o.github.TokenPath = actions.GetInput("github-token-path")
+	if o.github.TokenPath == "" {
+		return fmt.Errorf("missing 'github-token-path'")
+	}
+
+	fixOrg := actions.GetInput(flagFixOrg)
+	if fixOrg != "" {
+		o.fixOrg, _ = strconv.ParseBool(fixOrg)
+	}
+
+	fixOrgMembers := actions.GetInput(flagFixOrgMembers)
+	if fixOrgMembers != "" {
+		o.fixOrgMembers, _ = strconv.ParseBool(fixOrgMembers)
+	}
+
+	fixTeams := actions.GetInput(flagFixTeams)
+	if fixTeams != "" {
+		o.fixTeams, _ = strconv.ParseBool(fixTeams)
+	}
+
+	fixTeamMembers := actions.GetInput(flagFixTeamMembers)
+	if fixTeamMembers != "" {
+		o.fixTeamMembers, _ = strconv.ParseBool(fixTeamMembers)
+	}
+
+	fixTeamRepos := actions.GetInput(flagFixTeamRepos)
+	if fixTeamRepos != "" {
+		o.fixTeamRepos, _ = strconv.ParseBool(fixTeamRepos)
+	}
+
+	fixRepos := actions.GetInput(flagFixRepos)
+	if fixRepos != "" {
+		o.fixRepos, _ = strconv.ParseBool(fixRepos)
+	}
+
+	o.minAdmins = defaultMinAdmins
+	minAdmins := actions.GetInput(flagMinAdmins)
+	if minAdmins != "" {
+		o.minAdmins, _ = strconv.Atoi(minAdmins)
+	}
+
+	requireSelf := actions.GetInput(flagRequireSelf)
+	if requireSelf != "" {
+		o.requireSelf, _ = strconv.ParseBool(requireSelf)
+	}
+
+	// TODO(flags): Consider parameterizing flag.
+	o.github.ThrottleHourlyTokens = defaultTokens
+	throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
+	if throttleHourlyTokens != "" {
+		o.github.ThrottleHourlyTokens, _ = strconv.Atoi(throttleHourlyTokens)
+	}
+
+	// TODO(flags): Consider parameterizing flag.
+	o.github.ThrottleAllowBurst = defaultBurst
+	throttleAllowBurst := actions.GetInput("github-allowed-burst")
+	if throttleHourlyTokens != "" {
+		o.github.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
+	}
+
+	o.github.Host = github.DefaultHost
+
+	o.logLevel = logrus.InfoLevel.String()
+	logLevel := actions.GetInput(flagLogLevel)
+	if logLevel != "" {
+		o.logLevel = logLevel
+	}
+
+	return nil
 }
 
 type dumpClient interface {
