@@ -326,6 +326,13 @@ func main() {
 
 	o := parseOptions()
 
+	err := run(&o)
+	if err != nil {
+		logrus.WithError(err).Fatal("an error occurred while running peribolos")
+	}
+}
+
+func run(o *options) error {
 	githubClient, err := o.github.GitHubClient(!o.confirm)
 	if err != nil {
 		logrus.WithError(err).Fatal("Error getting GitHub client.")
@@ -348,9 +355,11 @@ func main() {
 		if err != nil {
 			logrus.WithError(err).Fatalf("Dump %s failed to marshal output.", o.dump)
 		}
+
 		logrus.Infof("Dumping orgs[\"%s\"]:", o.dump)
 		fmt.Println(string(out))
-		return
+
+		return nil
 	}
 
 	raw, err := ioutil.ReadFile(o.config)
@@ -364,11 +373,14 @@ func main() {
 	}
 
 	for name, orgcfg := range cfg.Orgs {
-		if err := configureOrg(o, githubClient, name, orgcfg); err != nil {
+		if err := configureOrg(*o, githubClient, name, orgcfg); err != nil {
 			logrus.Fatalf("Configuration failed: %v", err)
 		}
 	}
+
 	logrus.Info("Finished syncing configuration.")
+
+	return nil
 }
 
 func (o *options) parseFromAction() error {
