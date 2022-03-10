@@ -83,27 +83,153 @@ func parseOptions() options {
 
 func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 	o.requiredAdmins = flagutil.NewStrings()
-	flags.BoolVar(&o.actions, "actions", true, "Run as GitHub Action and collect the flags using Actions syntax, if you want to run as standard command see --actions to false")
-	flags.Var(&o.requiredAdmins, "required-admins", "Ensure config specifies these users as admins")
-	flags.IntVar(&o.minAdmins, "min-admins", defaultMinAdmins, "Ensure config specifies at least this many admins")
-	flags.BoolVar(&o.requireSelf, "require-self", true, "Ensure --github-token-path user is an admin")
-	flags.Float64Var(&o.maximumDelta, "maximum-removal-delta", defaultDelta, "Fail if config removes more than this fraction of current members")
-	flags.StringVar(&o.config, "config-path", "", "Path to org config.yaml")
-	flags.BoolVar(&o.confirm, "confirm", false, "Mutate github if set")
-	flags.IntVar(&o.tokensPerHour, "tokens", defaultTokens, "Throttle hourly token consumption (0 to disable) DEPRECATED: use --github-hourly-tokens")
-	flags.IntVar(&o.tokenBurst, "token-burst", defaultBurst, "Allow consuming a subset of hourly tokens in a short burst. DEPRECATED: use --github-allowed-burst")
-	flags.StringVar(&o.dump, "dump", "", "Output current config of this org if set")
-	flags.BoolVar(&o.dumpFull, "dump-full", false, "Output current config of the org as a valid input config file instead of a snippet")
-	flags.BoolVar(&o.ignoreSecretTeams, "ignore-secret-teams", false, "Do not dump or update secret teams if set")
-	flags.BoolVar(&o.fixOrg, "fix-org", false, "Change org metadata if set")
-	flags.BoolVar(&o.fixOrgMembers, "fix-org-members", false, "Add/remove org members if set")
-	flags.BoolVar(&o.fixTeams, "fix-teams", false, "Create/delete/update teams if set")
-	flags.BoolVar(&o.fixTeamMembers, "fix-team-members", false, "Add/remove team members if set")
-	flags.BoolVar(&o.fixTeamRepos, "fix-team-repos", false, "Add/remove team permissions on repos if set")
-	flags.BoolVar(&o.fixRepos, "fix-repos", false, "Create/update repositories if set")
-	flags.BoolVar(&o.allowRepoArchival, "allow-repo-archival", false, "If set, archiving repos is allowed while updating repos")
-	flags.BoolVar(&o.allowRepoPublish, "allow-repo-publish", false, "If set, making private repos public is allowed while updating repos")
-	flags.StringVar(&o.logLevel, "log-level", logrus.InfoLevel.String(), fmt.Sprintf("Logging level, one of %v", logrus.AllLevels))
+
+	flags.BoolVar(
+		&o.actions,
+		"actions",
+		true,
+		"Run as GitHub Action and collect the flags using Actions syntax, if you want to run as standard command see --actions to false",
+	)
+
+	flags.Var(
+		&o.requiredAdmins,
+		"required-admins",
+		"Ensure config specifies these users as admins",
+	)
+
+	flags.IntVar(
+		&o.minAdmins,
+		"min-admins",
+		defaultMinAdmins,
+		"Ensure config specifies at least this many admins",
+	)
+
+	flags.BoolVar(
+		&o.requireSelf,
+		"require-self",
+		true,
+		"Ensure --github-token-path user is an admin",
+	)
+
+	flags.Float64Var(
+		&o.maximumDelta,
+		"maximum-removal-delta",
+		defaultDelta,
+		"Fail if config removes more than this fraction of current members",
+	)
+
+	flags.StringVar(
+		&o.config,
+		"config-path",
+		"",
+		"Path to org config.yaml",
+	)
+
+	flags.BoolVar(
+		&o.confirm,
+		"confirm",
+		false,
+		"Mutate github if set",
+	)
+
+	flags.IntVar(
+		&o.tokensPerHour,
+		"tokens",
+		defaultTokens,
+		"Throttle hourly token consumption (0 to disable) DEPRECATED: use --github-hourly-tokens",
+	)
+
+	flags.IntVar(
+		&o.tokenBurst,
+		"token-burst",
+		defaultBurst,
+		"Allow consuming a subset of hourly tokens in a short burst. DEPRECATED: use --github-allowed-burst",
+	)
+
+	flags.StringVar(
+		&o.dump,
+		"dump",
+		"",
+		"Output current config of this org if set",
+	)
+
+	flags.BoolVar(
+		&o.dumpFull,
+		"dump-full",
+		false,
+		"Output current config of the org as a valid input config file instead of a snippet",
+	)
+
+	flags.BoolVar(
+		&o.ignoreSecretTeams,
+		"ignore-secret-teams",
+		false,
+		"Do not dump or update secret teams if set",
+	)
+
+	flags.BoolVar(
+		&o.fixOrg,
+		"fix-org",
+		false,
+		"Change org metadata if set",
+	)
+
+	flags.BoolVar(
+		&o.fixOrgMembers,
+		"fix-org-members",
+		false,
+		"Add/remove org members if set",
+	)
+
+	flags.BoolVar(
+		&o.fixTeams,
+		"fix-teams",
+		false,
+		"Create/delete/update teams if set",
+	)
+
+	flags.BoolVar(
+		&o.fixTeamMembers,
+		"fix-team-members",
+		false,
+		"Add/remove team members if set",
+	)
+
+	flags.BoolVar(
+		&o.fixTeamRepos,
+		"fix-team-repos",
+		false,
+		"Add/remove team permissions on repos if set",
+	)
+
+	flags.BoolVar(
+		&o.fixRepos,
+		"fix-repos",
+		false,
+		"Create/update repositories if set",
+	)
+
+	flags.BoolVar(
+		&o.allowRepoArchival,
+		"allow-repo-archival",
+		false,
+		"If set, archiving repos is allowed while updating repos",
+	)
+
+	flags.BoolVar(
+		&o.allowRepoPublish,
+		"allow-repo-publish",
+		false,
+		"If set, making private repos public is allowed while updating repos",
+	)
+
+	flags.StringVar(
+		&o.logLevel,
+		"log-level",
+		logrus.InfoLevel.String(),
+		fmt.Sprintf("Logging level, one of %v", logrus.AllLevels),
+	)
+
 	o.github.AddCustomizedFlags(flags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
 	if err := flags.Parse(args); err != nil {
 		return err
