@@ -42,6 +42,29 @@ const (
 	defaultDelta     = 0.25
 	defaultTokens    = 300
 	defaultBurst     = 100
+
+	// Flags.
+	flagActions           = "actions"
+	flagRequiredAdmins    = "required-admins"
+	flagMinAdmins         = "min-admins"
+	flagRequireSelf       = "require-self"
+	flagMaxRemovalDelta   = "maximum-removal-delta"
+	flagConfigPath        = "config-path"
+	flagConfirm           = "confirm"
+	flagTokens            = "tokens"
+	flagTokenBurst        = "token-burst"
+	flagDump              = "dump"
+	flagDumpFull          = "dump-full"
+	flagIgnoreSecretTeams = "ignore-secret-teams"
+	flagFixOrg            = "fix-org"
+	flagFixOrgMembers     = "fix-org-members"
+	flagFixTeams          = "fix-teams"
+	flagFixTeamMembers    = "fix-team-members"
+	flagFixTeamRepos      = "fix-team-repos"
+	flagFixRepos          = "fix-repos"
+	flagAllowRepoArchival = "allow-repo-archival"
+	flagAllowRepoPublish  = "allow-repo-publish"
+	flagLogLevel          = "log-level"
 )
 
 type options struct {
@@ -86,146 +109,146 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 
 	flags.BoolVar(
 		&o.actions,
-		"actions",
+		flagActions,
 		true,
 		"Run as GitHub Action and collect the flags using Actions syntax, if you want to run as standard command see --actions to false",
 	)
 
 	flags.Var(
 		&o.requiredAdmins,
-		"required-admins",
+		flagRequiredAdmins,
 		"Ensure config specifies these users as admins",
 	)
 
 	flags.IntVar(
 		&o.minAdmins,
-		"min-admins",
+		flagMinAdmins,
 		defaultMinAdmins,
 		"Ensure config specifies at least this many admins",
 	)
 
 	flags.BoolVar(
 		&o.requireSelf,
-		"require-self",
+		flagRequireSelf,
 		true,
 		"Ensure --github-token-path user is an admin",
 	)
 
 	flags.Float64Var(
 		&o.maximumDelta,
-		"maximum-removal-delta",
+		flagMaxRemovalDelta,
 		defaultDelta,
 		"Fail if config removes more than this fraction of current members",
 	)
 
 	flags.StringVar(
 		&o.config,
-		"config-path",
+		flagConfigPath,
 		"",
 		"Path to org config.yaml",
 	)
 
 	flags.BoolVar(
 		&o.confirm,
-		"confirm",
+		flagConfirm,
 		false,
 		"Mutate github if set",
 	)
 
 	flags.IntVar(
 		&o.tokensPerHour,
-		"tokens",
+		flagTokens,
 		defaultTokens,
 		"Throttle hourly token consumption (0 to disable) DEPRECATED: use --github-hourly-tokens",
 	)
 
 	flags.IntVar(
 		&o.tokenBurst,
-		"token-burst",
+		flagTokenBurst,
 		defaultBurst,
 		"Allow consuming a subset of hourly tokens in a short burst. DEPRECATED: use --github-allowed-burst",
 	)
 
 	flags.StringVar(
 		&o.dump,
-		"dump",
+		flagDump,
 		"",
 		"Output current config of this org if set",
 	)
 
 	flags.BoolVar(
 		&o.dumpFull,
-		"dump-full",
+		flagDumpFull,
 		false,
 		"Output current config of the org as a valid input config file instead of a snippet",
 	)
 
 	flags.BoolVar(
 		&o.ignoreSecretTeams,
-		"ignore-secret-teams",
+		flagIgnoreSecretTeams,
 		false,
 		"Do not dump or update secret teams if set",
 	)
 
 	flags.BoolVar(
 		&o.fixOrg,
-		"fix-org",
+		flagFixOrg,
 		false,
 		"Change org metadata if set",
 	)
 
 	flags.BoolVar(
 		&o.fixOrgMembers,
-		"fix-org-members",
+		flagFixOrgMembers,
 		false,
 		"Add/remove org members if set",
 	)
 
 	flags.BoolVar(
 		&o.fixTeams,
-		"fix-teams",
+		flagFixTeams,
 		false,
 		"Create/delete/update teams if set",
 	)
 
 	flags.BoolVar(
 		&o.fixTeamMembers,
-		"fix-team-members",
+		flagFixTeamMembers,
 		false,
 		"Add/remove team members if set",
 	)
 
 	flags.BoolVar(
 		&o.fixTeamRepos,
-		"fix-team-repos",
+		flagFixTeamRepos,
 		false,
 		"Add/remove team permissions on repos if set",
 	)
 
 	flags.BoolVar(
 		&o.fixRepos,
-		"fix-repos",
+		flagFixRepos,
 		false,
 		"Create/update repositories if set",
 	)
 
 	flags.BoolVar(
 		&o.allowRepoArchival,
-		"allow-repo-archival",
+		flagAllowRepoArchival,
 		false,
 		"If set, archiving repos is allowed while updating repos",
 	)
 
 	flags.BoolVar(
 		&o.allowRepoPublish,
-		"allow-repo-publish",
+		flagAllowRepoPublish,
 		false,
 		"If set, making private repos public is allowed while updating repos",
 	)
 
 	flags.StringVar(
 		&o.logLevel,
-		"log-level",
+		flagLogLevel,
 		logrus.InfoLevel.String(),
 		fmt.Sprintf("Logging level, one of %v", logrus.AllLevels),
 	)
@@ -236,71 +259,74 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 	}
 
 	if o.actions {
-		o.dump = actions.GetInput("dump")
-		o.config = actions.GetInput("config-path")
+		o.dump = actions.GetInput(flagDump)
+		o.config = actions.GetInput(flagConfigPath)
 
-		dumpFull := actions.GetInput("dump-full")
+		dumpFull := actions.GetInput(flagDumpFull)
 		if dumpFull != "" {
 			o.dumpFull, _ = strconv.ParseBool(dumpFull)
 		}
 
-		confirm := actions.GetInput("confirm")
+		confirm := actions.GetInput(flagConfirm)
 		if confirm != "" {
 			o.confirm, _ = strconv.ParseBool(confirm)
 		}
 
+		// TODO(flags): Consider parameterizing flag.
 		o.github.TokenPath = actions.GetInput("github-token-path")
 		if o.github.TokenPath == "" {
 			return fmt.Errorf("missing 'github-token-path'")
 		}
 
-		fixOrg := actions.GetInput("fix-org")
+		fixOrg := actions.GetInput(flagFixOrg)
 		if fixOrg != "" {
 			o.fixOrg, _ = strconv.ParseBool(fixOrg)
 		}
 
-		fixOrgMembers := actions.GetInput("fix-org-members")
+		fixOrgMembers := actions.GetInput(flagFixOrgMembers)
 		if fixOrgMembers != "" {
 			o.fixOrgMembers, _ = strconv.ParseBool(fixOrgMembers)
 		}
 
-		fixTeams := actions.GetInput("fix-teams")
+		fixTeams := actions.GetInput(flagFixTeams)
 		if fixTeams != "" {
 			o.fixTeams, _ = strconv.ParseBool(fixTeams)
 		}
 
-		fixTeamMembers := actions.GetInput("fix-teams-members")
+		fixTeamMembers := actions.GetInput(flagFixTeamMembers)
 		if fixTeamMembers != "" {
 			o.fixTeamMembers, _ = strconv.ParseBool(fixTeamMembers)
 		}
 
-		fixTeamRepos := actions.GetInput("fix-team-repos")
+		fixTeamRepos := actions.GetInput(flagFixTeamRepos)
 		if fixTeamRepos != "" {
 			o.fixTeamRepos, _ = strconv.ParseBool(fixTeamRepos)
 		}
 
-		fixRepos := actions.GetInput("fix-repos")
+		fixRepos := actions.GetInput(flagFixRepos)
 		if fixRepos != "" {
 			o.fixRepos, _ = strconv.ParseBool(fixRepos)
 		}
 
 		o.minAdmins = defaultMinAdmins
-		minAdmins := actions.GetInput("min-admins")
+		minAdmins := actions.GetInput(flagMinAdmins)
 		if minAdmins != "" {
 			o.minAdmins, _ = strconv.Atoi(minAdmins)
 		}
 
-		requireSelf := actions.GetInput("require-self")
+		requireSelf := actions.GetInput(flagRequireSelf)
 		if requireSelf != "" {
 			o.requireSelf, _ = strconv.ParseBool(requireSelf)
 		}
 
+		// TODO(flags): Consider parameterizing flag.
 		o.github.ThrottleHourlyTokens = defaultTokens
 		throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
 		if throttleHourlyTokens != "" {
 			o.github.ThrottleHourlyTokens, _ = strconv.Atoi(throttleHourlyTokens)
 		}
 
+		// TODO(flags): Consider parameterizing flag.
 		o.github.ThrottleAllowBurst = defaultBurst
 		throttleAllowBurst := actions.GetInput("github-allowed-burst")
 		if throttleHourlyTokens != "" {
@@ -310,7 +336,7 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 		o.github.Host = github.DefaultHost
 
 		o.logLevel = logrus.InfoLevel.String()
-		logLevel := actions.GetInput("log-level")
+		logLevel := actions.GetInput(flagLogLevel)
 		if logLevel != "" {
 			o.logLevel = logLevel
 		}
