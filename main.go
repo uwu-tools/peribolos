@@ -17,7 +17,6 @@ limitations under the License.
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -96,13 +95,17 @@ type options struct {
 	logLevel string
 }
 
+func newOptions() *options {
+	return &options{}
+}
+
 func parseOptions() options {
-	var o options
+	o := newOptions()
 	if err := o.parseArgs(flag.CommandLine, os.Args[1:]); err != nil {
 		logrus.Fatalf("Invalid flags: %v", err)
 	}
 
-	return o
+	return *o
 }
 
 func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
@@ -259,9 +262,20 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 		return err
 	}
 
-	err := o.parseFromAction()
-	if err != nil {
-		return fmt.Errorf("parsing from Action: %w", err)
+	o.github.Host = github.DefaultHost
+
+	// TODO(flags): Consider parameterizing flag.
+	o.github.ThrottleHourlyTokens = defaultTokens
+
+	// TODO(flags): Consider parameterizing flag.
+	o.github.ThrottleAllowBurst = defaultBurst
+
+	if o.actions {
+		fmt.Printf("Running in GitHub Actions environment")
+		err := o.parseFromAction()
+		if err != nil {
+			return fmt.Errorf("parsing from Action: %w", err)
+		}
 	}
 
 	if err := o.github.Validate(!o.confirm); err != nil {
@@ -358,10 +372,6 @@ func main() {
 }
 
 func (o *options) parseFromAction() error {
-	if !o.actions {
-		return errors.New("cannot parse options from action in a non-Actions environment")
-	}
-
 	o.dump = actions.GetInput(flagDump)
 	o.config = actions.GetInput(flagConfigPath)
 
@@ -422,23 +432,16 @@ func (o *options) parseFromAction() error {
 		o.requireSelf, _ = strconv.ParseBool(requireSelf)
 	}
 
-	// TODO(flags): Consider parameterizing flag.
-	o.github.ThrottleHourlyTokens = defaultTokens
 	throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
 	if throttleHourlyTokens != "" {
 		o.github.ThrottleHourlyTokens, _ = strconv.Atoi(throttleHourlyTokens)
 	}
 
-	// TODO(flags): Consider parameterizing flag.
-	o.github.ThrottleAllowBurst = defaultBurst
 	throttleAllowBurst := actions.GetInput("github-allowed-burst")
 	if throttleHourlyTokens != "" {
 		o.github.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
 	}
 
-	o.github.Host = github.DefaultHost
-
-	o.logLevel = logrus.InfoLevel.String()
 	logLevel := actions.GetInput(flagLogLevel)
 	if logLevel != "" {
 		o.logLevel = logLevel
