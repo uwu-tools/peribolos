@@ -1,0 +1,12 @@
+defaultBaseImage: gcr.io/distroless/base-debian10
+
+builds:
+- id: peribolos
+  dir: .
+  main: ./main.go
+  env:
+  - CGO_ENABLED=0
+  flags:
+  - -trimpath
+  ldflags:
+  - -extldflags "-static"
