@@ -62,12 +62,12 @@ func TestOptions(t *testing.T) {
 			args: []string{"--config-path=foo", "--maximum-removal-delta=-0.1"},
 		},
 		{
-			name: "reject --dump-full-config without --dump",
-			args: []string{"--config-path=foo", "--dump-full-config"},
+			name: "reject --dump-full without --dump",
+			args: []string{"--config-path=foo", "--dump-full"},
 		},
 		{
 			name: "maximal delta",
-			args: []string{"--config-path=foo", "--maximum-removal-delta=1", "--actions=false"},
+			args: []string{"--config-path=foo", "--maximum-removal-delta=1"},
 			expected: &options{
 				config:        "foo",
 				minAdmins:     defaultMinAdmins,
@@ -80,7 +80,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "minimal delta",
-			args: []string{"--config-path=foo", "--maximum-removal-delta=0", "--actions=false"},
+			args: []string{"--config-path=foo", "--maximum-removal-delta=0"},
 			expected: &options{
 				config:        "foo",
 				minAdmins:     defaultMinAdmins,
@@ -93,7 +93,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "minimal admins",
-			args: []string{"--config-path=foo", "--min-admins=2", "--actions=false"},
+			args: []string{"--config-path=foo", "--min-admins=2"},
 			expected: &options{
 				config:        "foo",
 				minAdmins:     2,
@@ -122,7 +122,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "allow legacy disabled throttle",
-			args: []string{"--config-path=foo", "--tokens=0", "--actions=false"},
+			args: []string{"--config-path=foo", "--tokens=0"},
 			expected: &options{
 				config:       "foo",
 				minAdmins:    defaultMinAdmins,
@@ -134,7 +134,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "allow dump without config",
-			args: []string{"--dump=frogger", "--actions=false"},
+			args: []string{"--dump=frogger"},
 			expected: &options{
 				minAdmins:     defaultMinAdmins,
 				requireSelf:   true,
@@ -147,7 +147,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "minimal",
-			args: []string{"--config-path=foo", "--actions=false"},
+			args: []string{"--config-path=foo"},
 			expected: &options{
 				config:        "foo",
 				minAdmins:     defaultMinAdmins,
@@ -160,7 +160,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "full",
-			args: []string{"--actions=false", "--config-path=foo", "--github-token-path=bar", "--github-endpoint=weird://url", "--confirm=true", "--require-self=false", "--tokens=5", "--token-burst=2", "--dump=", "--fix-org", "--fix-org-members", "--fix-teams", "--fix-team-members", "--log-level=debug"},
+			args: []string{"--config-path=foo", "--github-token-path=bar", "--github-endpoint=weird://url", "--confirm=true", "--require-self=false", "--tokens=5", "--token-burst=2", "--dump=", "--fix-org", "--fix-org-members", "--fix-teams", "--fix-team-members", "--log-level=debug"},
 			expected: &options{
 				config:         "foo",
 				confirm:        true,
