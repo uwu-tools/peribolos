@@ -26,7 +26,6 @@ import (
 	actions "github.com/sethvargo/go-githubactions"
 	"github.com/sirupsen/logrus"
 	"k8s.io/test-infra/prow/flagutil"
-	"k8s.io/test-infra/prow/github"
 )
 
 const (
@@ -254,14 +253,13 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 		return err
 	}
 
-	o.github.Host = github.DefaultHost
+	// TODO(flags): Consider parameterizing flag.
+	o.github.ThrottleHourlyTokens = o.tokensPerHour
 
 	// TODO(flags): Consider parameterizing flag.
-	o.github.ThrottleHourlyTokens = defaultTokens
+	o.github.ThrottleAllowBurst = o.tokenBurst
 
-	// TODO(flags): Consider parameterizing flag.
-	o.github.ThrottleAllowBurst = defaultBurst
-
+	// TODO(actions): Add test case
 	if o.usingActions {
 		fmt.Printf("Running in GitHub Actions environment")
 		err := o.parseFromAction()
