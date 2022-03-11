@@ -61,7 +61,7 @@ type options struct {
 	// Infer if peribolos is running in a GitHub Action.
 	// The `CI` environment variable will always be set to "true" in a GitHub Action.
 	// ref: https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
-	usingActions      bool `env:"CI"`
+	UsingActions      bool `env:"CI"`
 	config            string
 	confirm           bool
 	dump              string
@@ -260,7 +260,7 @@ func (o *options) parseArgs(flags *flag.FlagSet, args []string) error {
 	o.github.ThrottleAllowBurst = o.tokenBurst
 
 	// TODO(actions): Add test case
-	if o.usingActions {
+	if o.UsingActions {
 		fmt.Printf("Running in GitHub Actions environment")
 		err := o.parseFromAction()
 		if err != nil {
