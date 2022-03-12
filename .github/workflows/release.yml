@@ -1,4 +1,4 @@
-name: Images
+name: Release
 
 on:
   push:
