@@ -1,0 +1,68 @@
+name: Presubmits
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@bdb12b622a910dfdc99a31fdfe6f45a16bc287a4 # v1
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+
+    - name: Set up Go
+      uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v3.0.0
+      with:
+        go-version: 1.17.x
+
+    - name: Build
+      run: go build -v ./...
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@bdb12b622a910dfdc99a31fdfe6f45a16bc287a4 # v1
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+
+    - name: Set up Go
+      uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v3.0.0
+      with:
+        go-version: 1.17.x
+
+    - name: Test
+      run: go test -v ./...
+
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@bdb12b622a910dfdc99a31fdfe6f45a16bc287a4 # v1
+      with:
+        egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
+
+    - uses: actions/checkout@629c2de402a417ea7690ca6ce3f33229e27606a5 # v2
+
+    - name: Set up Go
+      uses: actions/setup-go@f6164bd8c8acb4a71fb2791a8b6c4024ff038dab # v3.0.0
+      with:
+        go-version: 1.17.x
+
+    - name: Install ko
+      uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4
+
+    - name: Local Image
+      run: make ko-local
