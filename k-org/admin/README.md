@@ -1,6 +1,7 @@
 # Apply kubernetes configuration
 
 Merge a PR that changes some `config/foo/org.yaml` and then run the following:
+
 ```shell
 # Displays what it would do without making changes until you add the confirm flag
 ./admin/update.sh --github-token-path ~/path-to-my-token # --confirm
@@ -12,6 +13,7 @@ It will apply the change if you send it the `--confirm` flag.
 It also runs `make test` to validate the config.
 
 Assuming everything works the tool should output something like the following:
+
 ```console
 {"client":"github","component":"peribolos","level":"info","msg":"Throttle(300, 100)","time":"2018-08-10T17:42:15-07:00"}
 {"client":"github","component":"peribolos","level":"info","msg":"GetOrg(kubernetes-incubator)","time":"2018-08-10T17:42:15-07:00"}
