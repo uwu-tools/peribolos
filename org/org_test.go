@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package org
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"reflect"
 	"sort"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/relengfam/peribolos/options"
 	"k8s.io/apimachinery/pkg/util/diff"
 
 	"k8s.io/test-infra/prow/config/org"
@@ -34,167 +34,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/yaml"
 )
-
-func TestOptions(t *testing.T) {
-	cases := []struct {
-		name     string
-		args     []string
-		expected *options
-	}{
-		{
-			name: "missing --config",
-			args: []string{},
-		},
-		{
-			name: "bad --github-endpoint",
-			args: []string{"--config-path=foo", "--github-endpoint=ht!tp://:dumb"},
-		},
-		{
-			name: "--minAdmins too low",
-			args: []string{"--config-path=foo", "--min-admins=1"},
-		},
-		{
-			name: "--maximum-removal-delta too high",
-			args: []string{"--config-path=foo", "--maximum-removal-delta=1.1"},
-		},
-		{
-			name: "--maximum-removal-delta too low",
-			args: []string{"--config-path=foo", "--maximum-removal-delta=-0.1"},
-		},
-		{
-			name: "reject --dump-full without --dump",
-			args: []string{"--config-path=foo", "--dump-full"},
-		},
-		{
-			name: "maximal delta",
-			args: []string{"--config-path=foo", "--maximum-removal-delta=1"},
-			expected: &options{
-				config:        "foo",
-				minAdmins:     defaultMinAdmins,
-				requireSelf:   true,
-				maximumDelta:  1,
-				tokensPerHour: defaultTokens,
-				tokenBurst:    defaultBurst,
-				logLevel:      "info",
-			},
-		},
-		{
-			name: "minimal delta",
-			args: []string{"--config-path=foo", "--maximum-removal-delta=0"},
-			expected: &options{
-				config:        "foo",
-				minAdmins:     defaultMinAdmins,
-				requireSelf:   true,
-				maximumDelta:  0,
-				tokensPerHour: defaultTokens,
-				tokenBurst:    defaultBurst,
-				logLevel:      "info",
-			},
-		},
-		{
-			name: "minimal admins",
-			args: []string{"--config-path=foo", "--min-admins=2"},
-			expected: &options{
-				config:        "foo",
-				minAdmins:     2,
-				requireSelf:   true,
-				maximumDelta:  defaultDelta,
-				tokensPerHour: defaultTokens,
-				tokenBurst:    defaultBurst,
-				logLevel:      "info",
-			},
-		},
-		{
-			name: "reject burst > tokens",
-			args: []string{"--config-path=foo", "--tokens=10", "--token-burst=11"},
-		},
-		{
-			name: "reject dump and confirm",
-			args: []string{"--confirm", "--dump=frogger"},
-		},
-		{
-			name: "reject dump and config-path",
-			args: []string{"--config-path=foo", "--dump=frogger"},
-		},
-		{
-			name: "reject --fix-team-members without --fix-teams",
-			args: []string{"--config-path=foo", "--fix-team-members"},
-		},
-		{
-			name: "allow legacy disabled throttle",
-			args: []string{"--config-path=foo", "--tokens=0"},
-			expected: &options{
-				config:       "foo",
-				minAdmins:    defaultMinAdmins,
-				requireSelf:  true,
-				maximumDelta: defaultDelta,
-				tokenBurst:   defaultBurst,
-				logLevel:     "info",
-			},
-		},
-		{
-			name: "allow dump without config",
-			args: []string{"--dump=frogger"},
-			expected: &options{
-				minAdmins:     defaultMinAdmins,
-				requireSelf:   true,
-				maximumDelta:  defaultDelta,
-				tokensPerHour: defaultTokens,
-				tokenBurst:    defaultBurst,
-				dump:          "frogger",
-				logLevel:      "info",
-			},
-		},
-		{
-			name: "minimal",
-			args: []string{"--config-path=foo"},
-			expected: &options{
-				config:        "foo",
-				minAdmins:     defaultMinAdmins,
-				requireSelf:   true,
-				maximumDelta:  defaultDelta,
-				tokensPerHour: defaultTokens,
-				tokenBurst:    defaultBurst,
-				logLevel:      "info",
-			},
-		},
-		{
-			name: "full",
-			args: []string{"--config-path=foo", "--github-token-path=bar", "--github-endpoint=weird://url", "--confirm=true", "--require-self=false", "--tokens=5", "--token-burst=2", "--dump=", "--fix-org", "--fix-org-members", "--fix-teams", "--fix-team-members", "--log-level=debug"},
-			expected: &options{
-				config:         "foo",
-				confirm:        true,
-				requireSelf:    false,
-				minAdmins:      defaultMinAdmins,
-				maximumDelta:   defaultDelta,
-				tokensPerHour:  5,
-				tokenBurst:     2,
-				fixOrg:         true,
-				fixOrgMembers:  true,
-				fixTeams:       true,
-				fixTeamMembers: true,
-				logLevel:       "debug",
-			},
-		},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			flags := flag.NewFlagSet(tc.name, flag.ContinueOnError)
-			var actual options
-			err := actual.parseArgs(flags, tc.args)
-			actual.github = flagutil.GitHubOptions{}
-			switch {
-			case err == nil && tc.expected == nil:
-				t.Errorf("%s: failed to return an error", tc.name)
-			case err != nil && tc.expected != nil:
-				t.Errorf("%s: unexpected error: %v", tc.name, err)
-			case tc.expected != nil && !reflect.DeepEqual(*tc.expected, actual):
-				t.Errorf("%s: got incorrect options: %v", tc.name, cmp.Diff(actual, *tc.expected, cmp.AllowUnexported(options{}, flagutil.Strings{}, flagutil.GitHubOptions{})))
-			}
-		})
-	}
-}
 
 type fakeClient struct {
 	orgMembers sets.String
@@ -508,7 +347,7 @@ func TestConfigureMembers(t *testing.T) {
 func TestConfigureOrgMembers(t *testing.T) {
 	cases := []struct {
 		name        string
-		opt         options
+		opt         options.Options
 		config      org.Config
 		admins      []string
 		members     []string
@@ -520,8 +359,8 @@ func TestConfigureOrgMembers(t *testing.T) {
 	}{
 		{
 			name: "too few admins",
-			opt: options{
-				minAdmins: 5,
+			opt: options.Options{
+				MinAdmins: 5,
 			},
 			config: org.Config{
 				Admins: []string{"joe"},
@@ -530,8 +369,8 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "remove too many admins",
-			opt: options{
-				maximumDelta: 0.3,
+			opt: options.Options{
+				MaxDelta: 0.3,
 			},
 			config: org.Config{
 				Admins: []string{"keep", "me"},
@@ -541,8 +380,8 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "forgot to add self",
-			opt: options{
-				requireSelf: true,
+			opt: options.Options{
+				RequireSelf: true,
 			},
 			config: org.Config{
 				Admins: []string{"other"},
@@ -551,17 +390,17 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "forgot to add required admins",
-			opt: options{
-				requiredAdmins: flagutil.NewStrings("francis"),
+			opt: options.Options{
+				RequiredAdmins: flagutil.NewStrings("francis"),
 			},
 			err: true,
 		},
 		{
 			name:   "can remove self with flag",
 			config: org.Config{},
-			opt: options{
-				maximumDelta: 1,
-				requireSelf:  false,
+			opt: options.Options{
+				MaxDelta:    1,
+				RequireSelf: false,
 			},
 			admins: []string{"me"},
 			remove: []string{"me"},
@@ -664,8 +503,8 @@ func TestConfigureOrgMembers(t *testing.T) {
 				Admins:  []string{"keep-admin", "new-admin"},
 				Members: []string{"keep-member", "new-member"},
 			},
-			opt: options{
-				maximumDelta: 0.5,
+			opt: options.Options{
+				MaxDelta: 0.5,
 			},
 			admins:     []string{"keep-admin", "drop-admin"},
 			members:    []string{"keep-member", "drop-member"},
@@ -2043,7 +1882,7 @@ func TestDumpOrgConfig(t *testing.T) {
 				repoPermissions: tc.repoPermissions,
 				repos:           tc.repos,
 			}
-			actual, err := dumpOrgConfig(fc, orgName, tc.ignoreSecretTeams)
+			actual, err := Dump(fc, orgName, tc.ignoreSecretTeams)
 			switch {
 			case err != nil:
 				if !tc.err {
@@ -2196,7 +2035,7 @@ func fixup(ret *org.Config) {
 func TestOrgInvitations(t *testing.T) {
 	cases := []struct {
 		name     string
-		opt      options
+		opt      options.Options
 		invitees sets.String // overrides
 		expected sets.String
 		err      bool
@@ -2207,35 +2046,35 @@ func TestOrgInvitations(t *testing.T) {
 			expected: sets.String{},
 		},
 		{
-			name: "call if fixOrgMembers",
-			opt: options{
-				fixOrgMembers: true,
+			name: "call if FixOrgMembers",
+			opt: options.Options{
+				FixOrgMembers: true,
 			},
 			invitees: sets.NewString("him", "her", "them"),
 			expected: sets.NewString("him", "her", "them"),
 		},
 		{
-			name: "call if fixTeamMembers",
-			opt: options{
-				fixTeamMembers: true,
+			name: "call if FixTeamMembers",
+			opt: options.Options{
+				FixTeamMembers: true,
 			},
 			invitees: sets.NewString("him", "her", "them"),
 			expected: sets.NewString("him", "her", "them"),
 		},
 		{
 			name: "ensure case normalization",
-			opt: options{
-				fixOrgMembers:  true,
-				fixTeamMembers: true,
+			opt: options.Options{
+				FixOrgMembers:  true,
+				FixTeamMembers: true,
 			},
 			invitees: sets.NewString("MiXeD", "lower", "UPPER"),
 			expected: sets.NewString("mixed", "lower", "upper"),
 		},
 		{
 			name: "error if list fails",
-			opt: options{
-				fixTeamMembers: true,
-				fixOrgMembers:  true,
+			opt: options.Options{
+				FixTeamMembers: true,
+				FixOrgMembers:  true,
 			},
 			invitees: sets.NewString("erick", "fail"),
 			err:      true,
@@ -2670,7 +2509,7 @@ func TestConfigureRepos(t *testing.T) {
 
 	testCases := []struct {
 		description     string
-		opts            options
+		opts            options.Options
 		orgConfig       org.Config
 		orgNameOverride string
 		repos           []github.FullRepo
@@ -2815,8 +2654,8 @@ func TestConfigureRepos(t *testing.T) {
 		},
 		{
 			description: "request to archive repo succeeds when allowed",
-			opts: options{
-				allowRepoArchival: true,
+			opts: options.Options{
+				AllowRepoArchival: true,
 			},
 			orgConfig: org.Config{
 				Repos: map[string]org.Repo{
@@ -2839,8 +2678,8 @@ func TestConfigureRepos(t *testing.T) {
 		},
 		{
 			description: "request to publish a private repo succeeds when allowed",
-			opts: options{
-				allowRepoPublish: true,
+			opts: options.Options{
+				AllowRepoPublish: true,
 			},
 			orgConfig: org.Config{
 				Repos: map[string]org.Repo{
