@@ -21,15 +21,41 @@ import (
 	"io/ioutil"
 
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
+	"github.com/spf13/cobra"
 
 	proworg "k8s.io/test-infra/prow/config/org"
+	"sigs.k8s.io/release-utils/version"
+	"sigs.k8s.io/yaml"
 
 	"github.com/relengfam/peribolos/options"
 	"github.com/relengfam/peribolos/org"
 )
 
-func Run(o *options.Options) error {
+// New creates a new instance of the peribolos command.
+func New(o *options.Options) *cobra.Command {
+	cmd := &cobra.Command{
+		// TODO(cmd): Add peribolos usage
+		Use:   "",
+		Short: "",
+		Long:  "",
+		// TODO(cmd): Add PreRunE logic
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return rootCmd(o)
+		},
+	}
+
+	// TODO(cmd): Add flags
+	//o.AddFlags(cmd)
+
+	// Add sub-commands.
+	cmd.AddCommand(version.Version())
+	return cmd
+}
+
+func rootCmd(o *options.Options) error {
 	githubClient, err := o.GithubOpts.GitHubClient(!o.Confirm)
 	if err != nil {
 		logrus.WithError(err).Fatal("Error getting GitHub client.")

@@ -29,8 +29,7 @@ func main() {
 	logrusutil.ComponentInit()
 
 	o := options.New()
-	err := cmd.Run(&o)
-	if err != nil {
+	if err := cmd.New(&o).Execute(); err != nil {
 		logrus.WithError(err).Fatal("an error occurred while running peribolos")
 	}
 }
