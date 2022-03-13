@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package org
 
 import (
 	"errors"
@@ -24,6 +24,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/relengfam/peribolos/options"
 	"k8s.io/apimachinery/pkg/util/diff"
 
 	"k8s.io/test-infra/prow/config/org"
@@ -346,7 +347,7 @@ func TestConfigureMembers(t *testing.T) {
 func TestConfigureOrgMembers(t *testing.T) {
 	cases := []struct {
 		name        string
-		opt         options
+		opt         options.Options
 		config      org.Config
 		admins      []string
 		members     []string
@@ -358,7 +359,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 	}{
 		{
 			name: "too few admins",
-			opt: options{
+			opt: options.Options{
 				MinAdmins: 5,
 			},
 			config: org.Config{
@@ -368,7 +369,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "remove too many admins",
-			opt: options{
+			opt: options.Options{
 				MaxDelta: 0.3,
 			},
 			config: org.Config{
@@ -379,7 +380,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "forgot to add self",
-			opt: options{
+			opt: options.Options{
 				RequireSelf: true,
 			},
 			config: org.Config{
@@ -389,7 +390,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "forgot to add required admins",
-			opt: options{
+			opt: options.Options{
 				RequiredAdmins: flagutil.NewStrings("francis"),
 			},
 			err: true,
@@ -397,7 +398,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		{
 			name:   "can remove self with flag",
 			config: org.Config{},
-			opt: options{
+			opt: options.Options{
 				MaxDelta:    1,
 				RequireSelf: false,
 			},
@@ -502,7 +503,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 				Admins:  []string{"keep-admin", "new-admin"},
 				Members: []string{"keep-member", "new-member"},
 			},
-			opt: options{
+			opt: options.Options{
 				MaxDelta: 0.5,
 			},
 			admins:     []string{"keep-admin", "drop-admin"},
@@ -1881,7 +1882,7 @@ func TestDumpOrgConfig(t *testing.T) {
 				repoPermissions: tc.repoPermissions,
 				repos:           tc.repos,
 			}
-			actual, err := dumpOrgConfig(fc, orgName, tc.ignoreSecretTeams)
+			actual, err := Dump(fc, orgName, tc.ignoreSecretTeams)
 			switch {
 			case err != nil:
 				if !tc.err {
@@ -2034,7 +2035,7 @@ func fixup(ret *org.Config) {
 func TestOrgInvitations(t *testing.T) {
 	cases := []struct {
 		name     string
-		opt      options
+		opt      options.Options
 		invitees sets.String // overrides
 		expected sets.String
 		err      bool
@@ -2046,7 +2047,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "call if FixOrgMembers",
-			opt: options{
+			opt: options.Options{
 				FixOrgMembers: true,
 			},
 			invitees: sets.NewString("him", "her", "them"),
@@ -2054,7 +2055,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "call if FixTeamMembers",
-			opt: options{
+			opt: options.Options{
 				FixTeamMembers: true,
 			},
 			invitees: sets.NewString("him", "her", "them"),
@@ -2062,7 +2063,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "ensure case normalization",
-			opt: options{
+			opt: options.Options{
 				FixOrgMembers:  true,
 				FixTeamMembers: true,
 			},
@@ -2071,7 +2072,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "error if list fails",
-			opt: options{
+			opt: options.Options{
 				FixTeamMembers: true,
 				FixOrgMembers:  true,
 			},
@@ -2508,7 +2509,7 @@ func TestConfigureRepos(t *testing.T) {
 
 	testCases := []struct {
 		description     string
-		opts            options
+		opts            options.Options
 		orgConfig       org.Config
 		orgNameOverride string
 		repos           []github.FullRepo
@@ -2653,7 +2654,7 @@ func TestConfigureRepos(t *testing.T) {
 		},
 		{
 			description: "request to archive repo succeeds when allowed",
-			opts: options{
+			opts: options.Options{
 				AllowRepoArchival: true,
 			},
 			orgConfig: org.Config{
@@ -2677,7 +2678,7 @@ func TestConfigureRepos(t *testing.T) {
 		},
 		{
 			description: "request to publish a private repo succeeds when allowed",
-			opts: options{
+			opts: options.Options{
 				AllowRepoPublish: true,
 			},
 			orgConfig: org.Config{
