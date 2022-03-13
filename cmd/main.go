@@ -21,9 +21,9 @@ import (
 	"io/ioutil"
 
 	"github.com/sirupsen/logrus"
-	"gopkg.in/yaml.v2"
 
 	proworg "k8s.io/test-infra/prow/config/org"
+	"sigs.k8s.io/yaml"
 
 	"github.com/relengfam/peribolos/options"
 	"github.com/relengfam/peribolos/org"
