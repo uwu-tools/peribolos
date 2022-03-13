@@ -18,80 +18,28 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"k8s.io/apimachinery/pkg/util/sets"
-	"sigs.k8s.io/yaml"
 
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
-
+	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
 	"k8s.io/test-infra/prow/logrusutil"
+
+	"github.com/relengfam/peribolos/cmd"
+	"github.com/relengfam/peribolos/options"
 )
 
 func main() {
 	logrusutil.ComponentInit()
 
-	o := parseOptions()
-
-	err := run(&o)
+	o := options.New()
+	err := cmd.Run(&o)
 	if err != nil {
 		logrus.WithError(err).Fatal("an error occurred while running peribolos")
 	}
-}
-
-func run(o *options) error {
-	githubClient, err := o.github.GitHubClient(!o.confirm)
-	if err != nil {
-		logrus.WithError(err).Fatal("Error getting GitHub client.")
-	}
-
-	if o.dump != "" {
-		ret, err := dumpOrgConfig(githubClient, o.dump, o.ignoreSecretTeams)
-		if err != nil {
-			logrus.WithError(err).Fatalf("Dump %s failed to collect current data.", o.dump)
-		}
-		var output interface{}
-		if o.dumpFull {
-			output = org.FullConfig{
-				Orgs: map[string]org.Config{o.dump: *ret},
-			}
-		} else {
-			output = ret
-		}
-		out, err := yaml.Marshal(output)
-		if err != nil {
-			logrus.WithError(err).Fatalf("Dump %s failed to marshal output.", o.dump)
-		}
-
-		logrus.Infof("Dumping orgs[\"%s\"]:", o.dump)
-		fmt.Println(string(out))
-
-		return nil
-	}
-
-	raw, err := ioutil.ReadFile(o.config)
-	if err != nil {
-		logrus.WithError(err).Fatal("Could not read --config-path file")
-	}
-
-	var cfg org.FullConfig
-	if err := yaml.Unmarshal(raw, &cfg); err != nil {
-		logrus.WithError(err).Fatal("Failed to load configuration")
-	}
-
-	for name, orgcfg := range cfg.Orgs {
-		if err := configureOrg(*o, githubClient, name, orgcfg); err != nil {
-			logrus.Fatalf("Configuration failed: %v", err)
-		}
-	}
-
-	logrus.Info("Finished syncing configuration.")
-
-	return nil
 }
 
 type dumpClient interface {
@@ -278,27 +226,27 @@ type orgClient interface {
 	UpdateOrgMembership(org, user string, admin bool) (*github.OrgMembership, error)
 }
 
-func configureOrgMembers(opt options, client orgClient, orgName string, orgConfig org.Config, invitees sets.String) error {
+func configureOrgMembers(opt options.Options, client orgClient, orgName string, orgConfig org.Config, invitees sets.String) error {
 	// Get desired state
 	wantAdmins := sets.NewString(orgConfig.Admins...)
 	wantMembers := sets.NewString(orgConfig.Members...)
 
 	// Sanity desired state
-	if n := len(wantAdmins); n < opt.minAdmins {
-		return fmt.Errorf("%s must specify at least %d admins, only found %d", orgName, opt.minAdmins, n)
+	if n := len(wantAdmins); n < opt.MinAdmins {
+		return fmt.Errorf("%s must specify at least %d admins, only found %d", orgName, opt.MinAdmins, n)
 	}
 	var missing []string
-	for _, r := range opt.requiredAdmins.Strings() {
+	for _, r := range opt.RequiredAdmins.Strings() {
 		if !wantAdmins.Has(r) {
 			missing = append(missing, r)
 		}
 	}
 	if len(missing) > 0 {
-		return fmt.Errorf("%s must specify %v as admins, missing %v", orgName, opt.requiredAdmins, missing)
+		return fmt.Errorf("%s must specify %v as admins, missing %v", orgName, opt.RequiredAdmins, missing)
 	}
-	if opt.requireSelf {
+	if opt.RequireSelf {
 		if me, err := client.BotUser(); err != nil {
-			return fmt.Errorf("cannot determine user making requests for %s: %v", opt.github.TokenPath, err)
+			return fmt.Errorf("cannot determine user making requests for %s: %v", opt.GithubOpts.TokenPath, err)
 		} else if !wantAdmins.Has(me.Login) {
 			return fmt.Errorf("authenticated user %s is not an admin of %s", me.Login, orgName)
 		}
@@ -329,8 +277,8 @@ func configureOrgMembers(opt options, client orgClient, orgName string, orgConfi
 	remove := have.all().Difference(want.all())
 
 	// Sanity check changes
-	if d := float64(len(remove)) / float64(len(have.all())); d > opt.maximumDelta {
-		return fmt.Errorf("cannot delete %d memberships or %.3f of %s (exceeds limit of %.3f)", len(remove), d, orgName, opt.maximumDelta)
+	if d := float64(len(remove)) / float64(len(have.all())); d > opt.MaxDelta {
+		return fmt.Errorf("cannot delete %d memberships or %.3f of %s (exceeds limit of %.3f)", len(remove), d, orgName, opt.MaxDelta)
 	}
 
 	teamMembers := sets.String{}
@@ -681,9 +629,9 @@ type inviteClient interface {
 	ListOrgInvitations(org string) ([]github.OrgInvitation, error)
 }
 
-func orgInvitations(opt options, client inviteClient, orgName string) (sets.String, error) {
+func orgInvitations(opt options.Options, client inviteClient, orgName string) (sets.String, error) {
 	invitees := sets.String{}
-	if !opt.fixOrgMembers && !opt.fixTeamMembers {
+	if !opt.FixOrgMembers && !opt.FixTeamMembers {
 		return invitees, nil
 	}
 	is, err := client.ListOrgInvitations(orgName)
@@ -699,9 +647,9 @@ func orgInvitations(opt options, client inviteClient, orgName string) (sets.Stri
 	return invitees, nil
 }
 
-func configureOrg(opt options, client github.Client, orgName string, orgConfig org.Config) error {
+func configureOrg(opt options.Options, client github.Client, orgName string, orgConfig org.Config) error {
 	// Ensure that metadata is configured correctly.
-	if !opt.fixOrg {
+	if !opt.FixOrg {
 		logrus.Infof("Skipping org metadata configuration")
 	} else if err := configureOrgMeta(client, orgName, orgConfig.Metadata); err != nil {
 		return err
@@ -713,26 +661,26 @@ func configureOrg(opt options, client github.Client, orgName string, orgConfig o
 	}
 
 	// Invite/remove/update members to the org.
-	if !opt.fixOrgMembers {
+	if !opt.FixOrgMembers {
 		logrus.Infof("Skipping org member configuration")
 	} else if err := configureOrgMembers(opt, client, orgName, orgConfig, invitees); err != nil {
 		return fmt.Errorf("failed to configure %s members: %w", orgName, err)
 	}
 
 	// Create repositories in the org
-	if !opt.fixRepos {
+	if !opt.FixRepos {
 		logrus.Info("Skipping org repositories configuration")
 	} else if err := configureRepos(opt, client, orgName, orgConfig); err != nil {
 		return fmt.Errorf("failed to configure %s repos: %w", orgName, err)
 	}
 
-	if !opt.fixTeams {
+	if !opt.FixTeams {
 		logrus.Infof("Skipping team and team member configuration")
 		return nil
 	}
 
 	// Find the id and current state of each declared team (create/delete as necessary)
-	githubTeams, err := configureTeams(client, orgName, orgConfig, opt.maximumDelta, opt.ignoreSecretTeams)
+	githubTeams, err := configureTeams(client, orgName, orgConfig, opt.MaxDelta, opt.IgnoreSecretTeams)
 	if err != nil {
 		return fmt.Errorf("failed to configure %s teams: %w", orgName, err)
 	}
@@ -743,7 +691,7 @@ func configureOrg(opt options, client github.Client, orgName string, orgConfig o
 			return fmt.Errorf("failed to configure %s teams: %w", orgName, err)
 		}
 
-		if !opt.fixTeamRepos {
+		if !opt.FixTeamRepos {
 			logrus.Infof("Skipping team repo permissions configuration")
 			continue
 		}
@@ -848,17 +796,17 @@ func newRepoUpdateRequest(current github.FullRepo, name string, repo org.Repo) g
 
 }
 
-func sanitizeRepoDelta(opt options, delta *github.RepoUpdateRequest) []error {
+func sanitizeRepoDelta(opt options.Options, delta *github.RepoUpdateRequest) []error {
 	var errs []error
 	if delta.Archived != nil && !*delta.Archived {
 		delta.Archived = nil
 		errs = append(errs, fmt.Errorf("asked to unarchive an archived repo, unsupported by GH API"))
 	}
-	if delta.Archived != nil && *delta.Archived && !opt.allowRepoArchival {
+	if delta.Archived != nil && *delta.Archived && !opt.AllowRepoArchival {
 		delta.Archived = nil
 		errs = append(errs, fmt.Errorf("asked to archive a repo but this is not allowed by default (see --allow-repo-archival)"))
 	}
-	if delta.Private != nil && !(*delta.Private || opt.allowRepoPublish) {
+	if delta.Private != nil && !(*delta.Private || opt.AllowRepoPublish) {
 		delta.Private = nil
 		errs = append(errs, fmt.Errorf("asked to publish a private repo but this is not allowed by default (see --allow-repo-publish)"))
 	}
@@ -866,7 +814,7 @@ func sanitizeRepoDelta(opt options, delta *github.RepoUpdateRequest) []error {
 	return errs
 }
 
-func configureRepos(opt options, client repoClient, orgName string, orgConfig org.Config) error {
+func configureRepos(opt options.Options, client repoClient, orgName string, orgConfig org.Config) error {
 	if err := validateRepos(orgConfig.Repos); err != nil {
 		return err
 	}
@@ -952,7 +900,7 @@ func configureRepos(opt options, client repoClient, orgName string, orgConfig or
 	return utilerrors.NewAggregate(allErrors)
 }
 
-func configureTeamAndMembers(opt options, client github.Client, githubTeams map[string]github.Team, name, orgName string, team org.Team, parent *int) error {
+func configureTeamAndMembers(opt options.Options, client github.Client, githubTeams map[string]github.Team, name, orgName string, team org.Team, parent *int) error {
 	gt, ok := githubTeams[name]
 	if !ok { // configureTeams is buggy if this is the case
 		return fmt.Errorf("%s not found in id list", name)
@@ -965,7 +913,7 @@ func configureTeamAndMembers(opt options, client github.Client, githubTeams map[
 	}
 
 	// Configure team members
-	if !opt.fixTeamMembers {
+	if !opt.FixTeamMembers {
 		logrus.Infof("Skipping %s member configuration", name)
 	} else if err = configureTeamMembers(client, orgName, gt, team); err != nil {
 		return fmt.Errorf("failed to update %s members: %w", name, err)
