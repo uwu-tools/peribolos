@@ -23,9 +23,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 
-	"k8s.io/test-infra/prow/config/org"
+	proworg "k8s.io/test-infra/prow/config/org"
 
 	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/org"
 )
 
 func Run(o *options.Options) error {
@@ -35,14 +36,14 @@ func Run(o *options.Options) error {
 	}
 
 	if o.Dump != "" {
-		ret, err := dumpOrgConfig(githubClient, o.Dump, o.IgnoreSecretTeams)
+		ret, err := org.Dump(githubClient, o.Dump, o.IgnoreSecretTeams)
 		if err != nil {
 			logrus.WithError(err).Fatalf("Dump %s failed to collect current data.", o.Dump)
 		}
 		var output interface{}
 		if o.DumpFull {
-			output = org.FullConfig{
-				Orgs: map[string]org.Config{o.Dump: *ret},
+			output = proworg.FullConfig{
+				Orgs: map[string]proworg.Config{o.Dump: *ret},
 			}
 		} else {
 			output = ret
@@ -63,13 +64,13 @@ func Run(o *options.Options) error {
 		logrus.WithError(err).Fatal("Could not read --config-path file")
 	}
 
-	var cfg org.FullConfig
+	var cfg proworg.FullConfig
 	if err := yaml.Unmarshal(raw, &cfg); err != nil {
 		logrus.WithError(err).Fatal("Failed to load configuration")
 	}
 
 	for name, orgcfg := range cfg.Orgs {
-		if err := configureOrg(*o, githubClient, name, orgcfg); err != nil {
+		if err := org.Configure(*o, githubClient, name, orgcfg); err != nil {
 			logrus.Fatalf("Configuration failed: %v", err)
 		}
 	}
