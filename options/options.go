@@ -86,28 +86,7 @@ func new() *Options {
 	return o
 }
 
-func (o *Options) parseArgs(flags *flag.FlagSet, args []string) error {
-
-	o.GithubOpts.AddCustomizedFlags(flags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
-	if err := flags.Parse(args); err != nil {
-		return err
-	}
-
-	// TODO(flags): Consider parameterizing flag.
-	o.GithubOpts.ThrottleHourlyTokens = o.tokensPerHour
-
-	// TODO(flags): Consider parameterizing flag.
-	o.GithubOpts.ThrottleAllowBurst = o.tokenBurst
-
-	// TODO(actions): Add test case
-	if o.UsingActions {
-		fmt.Printf("Running in GitHub Actions environment")
-		err := o.parseFromAction()
-		if err != nil {
-			return fmt.Errorf("parsing from Action: %w", err)
-		}
-	}
-
+func (o *Options) validateArgsForAction() error {
 	if err := o.GithubOpts.Validate(!o.Confirm); err != nil {
 		return fmt.Errorf(err.Error())
 	}
@@ -151,7 +130,10 @@ func (o *Options) parseArgs(flags *flag.FlagSet, args []string) error {
 	return nil
 }
 
-func (o *Options) parseFromAction() error {
+func (o *Options) ParseFromAction() error {
+	ghFlags := flag.NewFlagSet("github-flags", flag.ContinueOnError)
+	o.GithubOpts.AddCustomizedFlags(ghFlags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
+
 	o.Dump = actions.GetInput(flagDump)
 	o.Config = actions.GetInput(flagConfigPath)
 
@@ -222,10 +204,17 @@ func (o *Options) parseFromAction() error {
 		o.GithubOpts.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
 	}
 
+	o.logLevel = logrus.InfoLevel.String()
 	logLevel := actions.GetInput(flagLogLevel)
 	if logLevel != "" {
 		o.logLevel = logLevel
 	}
 
-	return nil
+	// TODO(flags): Consider parameterizing flag.
+	o.GithubOpts.ThrottleHourlyTokens = o.tokensPerHour
+
+	// TODO(flags): Consider parameterizing flag.
+	o.GithubOpts.ThrottleAllowBurst = o.tokenBurst
+
+	return o.validateArgsForAction()
 }

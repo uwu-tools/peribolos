@@ -47,7 +47,9 @@ func New(o *options.Options) *cobra.Command {
 		},
 	}
 
-	o.AddFlags(cmd)
+	if !o.UsingActions {
+		o.AddFlags(cmd)
+	}
 
 	// Add sub-commands.
 	cmd.AddCommand(version.Version())
