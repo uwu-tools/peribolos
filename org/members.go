@@ -69,7 +69,7 @@ func configureOrgMembers(opt options.Options, client orgClient, orgName string, 
 		return fmt.Errorf("%s must specify at least %d admins, only found %d", orgName, opt.MinAdmins, n)
 	}
 	var missing []string
-	for _, r := range opt.RequiredAdmins.Strings() {
+	for _, r := range opt.RequiredAdmins {
 		if !wantAdmins.Has(r) {
 			missing = append(missing, r)
 		}

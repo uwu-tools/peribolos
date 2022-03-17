@@ -19,7 +19,6 @@ package options
 import (
 	"flag"
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/caarlos0/env/v6"
@@ -34,28 +33,6 @@ const (
 	defaultDelta     = 0.25
 	defaultTokens    = 300
 	defaultBurst     = 100
-
-	// Flags.
-	flagRequiredAdmins    = "required-admins"
-	flagMinAdmins         = "min-admins"
-	flagRequireSelf       = "require-self"
-	flagMaxRemovalDelta   = "maximum-removal-delta"
-	flagConfigPath        = "config-path"
-	flagConfirm           = "confirm"
-	flagTokens            = "tokens"
-	flagTokenBurst        = "token-burst"
-	flagDump              = "dump"
-	flagDumpFull          = "dump-full"
-	flagIgnoreSecretTeams = "ignore-secret-teams"
-	flagFixOrg            = "fix-org"
-	flagFixOrgMembers     = "fix-org-members"
-	flagFixTeams          = "fix-teams"
-	flagFixTeamMembers    = "fix-team-members"
-	flagFixTeamRepos      = "fix-team-repos"
-	flagFixRepos          = "fix-repos"
-	flagAllowRepoArchival = "allow-repo-archival"
-	flagAllowRepoPublish  = "allow-repo-publish"
-	flagLogLevel          = "log-level"
 )
 
 type Options struct {
@@ -70,7 +47,7 @@ type Options struct {
 	MaxDelta          float64
 	MinAdmins         int
 	RequireSelf       bool
-	RequiredAdmins    flagutil.Strings
+	RequiredAdmins    []string
 	FixOrg            bool
 	FixOrgMembers     bool
 	FixTeamMembers    bool
@@ -91,9 +68,11 @@ type Options struct {
 
 func New() Options {
 	o := new()
-	if err := o.parseArgs(flag.CommandLine, os.Args[1:]); err != nil {
-		logrus.Fatalf("Invalid flags: %v", err)
-	}
+	/*
+		if err := o.parseArgs(flag.CommandLine, os.Args[1:]); err != nil {
+			logrus.Fatalf("Invalid flags: %v", err)
+		}
+	*/
 
 	return *o
 }
@@ -108,146 +87,6 @@ func new() *Options {
 }
 
 func (o *Options) parseArgs(flags *flag.FlagSet, args []string) error {
-	o.RequiredAdmins = flagutil.NewStrings()
-
-	flags.Var(
-		&o.RequiredAdmins,
-		flagRequiredAdmins,
-		"Ensure config specifies these users as admins",
-	)
-
-	flags.IntVar(
-		&o.MinAdmins,
-		flagMinAdmins,
-		defaultMinAdmins,
-		"Ensure config specifies at least this many admins",
-	)
-
-	flags.BoolVar(
-		&o.RequireSelf,
-		flagRequireSelf,
-		true,
-		"Ensure github token path user is an admin",
-	)
-
-	flags.Float64Var(
-		&o.MaxDelta,
-		flagMaxRemovalDelta,
-		defaultDelta,
-		"Fail if config removes more than this fraction of current members",
-	)
-
-	flags.StringVar(
-		&o.Config,
-		flagConfigPath,
-		"",
-		"Path to org config.yaml",
-	)
-
-	flags.BoolVar(
-		&o.Confirm,
-		flagConfirm,
-		false,
-		"Mutate github if set",
-	)
-
-	flags.IntVar(
-		&o.tokensPerHour,
-		flagTokens,
-		defaultTokens,
-		"Throttle hourly token consumption (0 to disable) DEPRECATED: use --github-hourly-tokens",
-	)
-
-	flags.IntVar(
-		&o.tokenBurst,
-		flagTokenBurst,
-		defaultBurst,
-		"Allow consuming a subset of hourly tokens in a short burst. DEPRECATED: use --github-allowed-burst",
-	)
-
-	flags.StringVar(
-		&o.Dump,
-		flagDump,
-		"",
-		"Output current config of this org if set",
-	)
-
-	flags.BoolVar(
-		&o.DumpFull,
-		flagDumpFull,
-		false,
-		"Output current config of the org as a valid input config file instead of a snippet",
-	)
-
-	flags.BoolVar(
-		&o.IgnoreSecretTeams,
-		flagIgnoreSecretTeams,
-		false,
-		"Do not dump or update secret teams if set",
-	)
-
-	flags.BoolVar(
-		&o.FixOrg,
-		flagFixOrg,
-		false,
-		"Change org metadata if set",
-	)
-
-	flags.BoolVar(
-		&o.FixOrgMembers,
-		flagFixOrgMembers,
-		false,
-		"Add/remove org members if set",
-	)
-
-	flags.BoolVar(
-		&o.FixTeams,
-		flagFixTeams,
-		false,
-		"Create/delete/update teams if set",
-	)
-
-	flags.BoolVar(
-		&o.FixTeamMembers,
-		flagFixTeamMembers,
-		false,
-		"Add/remove team members if set",
-	)
-
-	flags.BoolVar(
-		&o.FixTeamRepos,
-		flagFixTeamRepos,
-		false,
-		"Add/remove team permissions on repos if set",
-	)
-
-	flags.BoolVar(
-		&o.FixRepos,
-		flagFixRepos,
-		false,
-		"Create/update repositories if set",
-	)
-
-	flags.BoolVar(
-		&o.AllowRepoArchival,
-		flagAllowRepoArchival,
-		false,
-		"If set, archiving repos is allowed while updating repos",
-	)
-
-	flags.BoolVar(
-		&o.AllowRepoPublish,
-		flagAllowRepoPublish,
-		false,
-		"If set, making private repos public is allowed while updating repos",
-	)
-
-	flags.StringVar(
-		&o.logLevel,
-		flagLogLevel,
-		logrus.InfoLevel.String(),
-		fmt.Sprintf("Logging level, one of %v", logrus.AllLevels),
-	)
 
 	o.GithubOpts.AddCustomizedFlags(flags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
 	if err := flags.Parse(args); err != nil {
