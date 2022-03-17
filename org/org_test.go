@@ -28,7 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/util/diff"
 
 	"k8s.io/test-infra/prow/config/org"
-	"k8s.io/test-infra/prow/flagutil"
 	"k8s.io/test-infra/prow/github"
 
 	"k8s.io/apimachinery/pkg/util/sets"
@@ -391,7 +390,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		{
 			name: "forgot to add required admins",
 			opt: options.Options{
-				RequiredAdmins: flagutil.NewStrings("francis"),
+				RequiredAdmins: []string{"francis"},
 			},
 			err: true,
 		},

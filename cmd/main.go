@@ -47,8 +47,7 @@ func New(o *options.Options) *cobra.Command {
 		},
 	}
 
-	// TODO(cmd): Add flags
-	//o.AddFlags(cmd)
+	o.AddFlags(cmd)
 
 	// Add sub-commands.
 	cmd.AddCommand(version.Version())
