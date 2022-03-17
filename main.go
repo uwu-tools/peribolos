@@ -17,6 +17,8 @@ limitations under the License.
 package main
 
 import (
+	"fmt"
+
 	"github.com/sirupsen/logrus"
 
 	"k8s.io/test-infra/prow/logrusutil"
@@ -29,6 +31,14 @@ func main() {
 	logrusutil.ComponentInit()
 
 	o := options.New()
+	if o.UsingActions {
+		fmt.Println(">>> Running in GitHub Actions environment <<<")
+		err := o.ParseFromAction()
+		if err != nil {
+			fmt.Println(err.Error())
+			logrus.WithError(err).Fatal("an error occurred while running peribolos in GitHub Action mode")
+		}
+	}
 	if err := cmd.New(&o).Execute(); err != nil {
 		logrus.WithError(err).Fatal("an error occurred while running peribolos")
 	}

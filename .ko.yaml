@@ -1,4 +1,4 @@
-defaultBaseImage: ghcr.io/chainguard-dev/apko:v0.1.2@sha256:5504f2a95018e3d8a52d80d9e1a128c6ea337581808ff9fe96f5628ce2336350
+defaultBaseImage: gcr.io/distroless/base-debian10
 
 builds:
 - id: peribolos
