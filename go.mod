@@ -6,6 +6,7 @@ replace k8s.io/client-go => k8s.io/client-go v0.22.5
 
 require (
 	github.com/caarlos0/env/v6 v6.9.1
+	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.5.7
 	github.com/sethvargo/go-githubactions v0.5.3
 	github.com/sirupsen/logrus v1.8.1
@@ -43,7 +44,6 @@ require (
 	github.com/form3tech-oss/jwt-go v3.2.3+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/fvbommel/sortorder v1.0.1 // indirect
-	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt v3.2.1+incompatible // indirect
