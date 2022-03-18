@@ -14,87 +14,77 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package main
+package merge
 
 import (
-	"flag"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strings"
-
-	"k8s.io/test-infra/prow/config/org"
 
 	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
+
+	"k8s.io/test-infra/prow/config/org"
 )
 
-func parseKeyValue(s string) (string, string) {
-	p := strings.SplitN(s, "=", 2)
-	if len(p) == 1 {
-		return p[0], ""
-	}
-	return p[0], p[1]
+type Options struct {
+	Orgs        flagMap
+	MergeTeams  bool
+	IgnoreTeams bool
 }
 
-type flagMap map[string]string
-
-func (fm flagMap) String() string {
-	var parts []string
-	for key, value := range fm {
-		if value == "" {
-			parts = append(parts, key)
-			continue
-		}
-		parts = append(parts, key+"="+value)
+func NewOptions() *Options {
+	o := &Options{
+		Orgs: flagMap{},
 	}
-	return strings.Join(parts, ",")
+
+	o.Validate()
+	return o
 }
 
-func (fm flagMap) Set(s string) error {
-	k, v := parseKeyValue(s)
-	if _, present := fm[k]; present {
-		return fmt.Errorf("duplicate key: %s", k)
-	}
-	fm[k] = v
-	return nil
-}
+var (
+	errValidate = errors.New("some options could not be validated")
+)
 
-type options struct {
-	orgs        flagMap
-	mergeTeams  bool
-	ignoreTeams bool
-}
-
-func main() {
-	o := options{orgs: flagMap{}}
-	flag.Var(o.orgs, "org-part", "Each instance adds an org-name=org.yaml part")
-	flag.BoolVar(&o.mergeTeams, "merge-teams", false, "Merge team-name/team.yaml files in each org.yaml dir")
-	flag.BoolVar(&o.ignoreTeams, "ignore-teams", false, "Never configure teams")
-	flag.Parse()
-
-	for _, a := range flag.Args() {
-		logrus.Print("Extra", a)
-		o.orgs.Set(a)
-	}
-
-	if o.mergeTeams && o.ignoreTeams {
-		logrus.Fatal("--merge-teams xor --ignore-teams, not both")
-	}
-
-	cfg, err := loadOrgs(o)
+// Run merges org configuration files
+func (o *Options) Run() error {
+	cfg, err := loadOrgs(*o)
 	if err != nil {
-		logrus.Fatalf("Failed to load orgs: %v", err)
+		return fmt.Errorf("Failed to load orgs: %v", err)
 	}
+
 	pc := org.FullConfig{
 		Orgs: cfg,
 	}
 	out, err := yaml.Marshal(pc)
 	if err != nil {
-		logrus.Fatalf("Failed to marshal orgs: %v", err)
+		return fmt.Errorf("Failed to marshal orgs: %v", err)
 	}
+
 	fmt.Println(string(out))
+	return nil
+}
+
+// Validate validates merge options.
+// TODO(options): Cleanup error messages.
+func (o *Options) Validate() error {
+	var errs []error
+
+	if o.MergeTeams && o.IgnoreTeams {
+		errs = append(errs, errors.New("--merge-teams XOR --ignore-teams, not both"))
+	}
+
+	if len(errs) != 0 {
+		return fmt.Errorf(
+			"%w: %+v",
+			errValidate,
+			errs,
+		)
+	}
+
+	return nil
 }
 
 func unmarshal(path string) (*org.Config, error) {
@@ -109,17 +99,17 @@ func unmarshal(path string) (*org.Config, error) {
 	return &cfg, nil
 }
 
-func loadOrgs(o options) (map[string]org.Config, error) {
+func loadOrgs(o Options) (map[string]org.Config, error) {
 	config := map[string]org.Config{}
-	for name, path := range o.orgs {
+	for name, path := range o.Orgs {
 		cfg, err := unmarshal(path)
 		if err != nil {
 			return nil, fmt.Errorf("error in %s: %v", path, err)
 		}
 		switch {
-		case o.ignoreTeams:
+		case o.IgnoreTeams:
 			cfg.Teams = nil
-		case o.mergeTeams:
+		case o.MergeTeams:
 			if cfg.Teams == nil {
 				cfg.Teams = map[string]org.Team{}
 			}
