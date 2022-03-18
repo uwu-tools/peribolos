@@ -10,7 +10,7 @@ require (
 	github.com/sethvargo/go-githubactions v0.5.3
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.4.0
-	k8s.io/apimachinery v0.22.5
+	k8s.io/apimachinery v0.22.8
 	k8s.io/test-infra v0.0.0-20211221011455-3d87616db8ae
 	sigs.k8s.io/release-utils v0.5.0
 	sigs.k8s.io/yaml v1.3.0
@@ -109,5 +109,5 @@ require (
 	k8s.io/utils v0.0.0-20211116205334-6203023598ed // indirect
 	knative.dev/pkg v0.0.0-20200711004937-22502028e31a // indirect
 	sigs.k8s.io/controller-runtime v0.10.3 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
+	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 )
