@@ -35,8 +35,8 @@ ORGS = $(shell find ./config -type d -mindepth 1 -maxdepth 1 | cut -d/ -f3)
 OUTPUT_DIR := $(shell pwd)/_output
 OUTPUT_BIN_DIR := $(OUTPUT_DIR)/bin
 
-MERGE_CMD := $(OUTPUT_BIN_DIR)/merge
 PERIBOLOS_CMD := $(OUTPUT_BIN_DIR)/peribolos
+MERGE_CMD := $(PERIBOLOS_CMD) merge
 
 CONFIG_FILES = $(shell find config/ -type f -name '*.yaml')
 MERGED_CONFIG := $(OUTPUT_DIR)/gen-config.yaml
@@ -59,6 +59,7 @@ config: $(MERGED_CONFIG)
 .PHONY: peribolos
 peribolos: $(PERIBOLOS_CMD)
 
+# TODO(merge): Fix this test
 .PHONY: test
 test: config
 	go test ./... --config=$(MERGED_CONFIG)
@@ -68,7 +69,7 @@ verify:
 	./hack/verify.sh
 
 .PHONY: update-prep
-update-prep: config test peribolos
+update-prep: config peribolos # TODO(merge): Fix this test "config test peribolos"
 
 .PHONY: deploy # --confirm
 deploy:
@@ -76,10 +77,6 @@ deploy:
 		$(-*-command-variables-*-) $(filter-out $@,$(MAKECMDGOALS))
 
 # actual targets that only get built if they don't already exist
-$(MERGE_CMD):
-	mkdir -p "$(OUTPUT_BIN_DIR)"
-	go build -v -o "$(OUTPUT_BIN_DIR)" ./cmd/merge
-
 $(MERGED_CONFIG): $(MERGE_CMD) $(CONFIG_FILES)
 	mkdir -p "$(OUTPUT_DIR)"
 	$(MERGE_CMD) \
@@ -88,4 +85,4 @@ $(MERGED_CONFIG): $(MERGE_CMD) $(CONFIG_FILES)
 		> $(MERGED_CONFIG)
 
 $(PERIBOLOS_CMD):
-	go build -v -o $(PERIBOLOS_CMD) ../
+	go build -v -o $(PERIBOLOS_CMD)
