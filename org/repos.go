@@ -26,7 +26,7 @@ import (
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
 
-	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/options/root"
 )
 
 type repoClient interface {
@@ -36,7 +36,7 @@ type repoClient interface {
 	UpdateRepo(owner, name string, repo github.RepoUpdateRequest) (*github.FullRepo, error)
 }
 
-func configureRepos(opt options.Options, client repoClient, orgName string, orgConfig org.Config) error {
+func configureRepos(opt root.Options, client repoClient, orgName string, orgConfig org.Config) error {
 	if err := validateRepos(orgConfig.Repos); err != nil {
 		return err
 	}
@@ -208,7 +208,7 @@ func newRepoUpdateRequest(current github.FullRepo, name string, repo org.Repo) g
 	return repoUpdate
 }
 
-func sanitizeRepoDelta(opt options.Options, delta *github.RepoUpdateRequest) []error {
+func sanitizeRepoDelta(opt root.Options, delta *github.RepoUpdateRequest) []error {
 	var errs []error
 	if delta.Archived != nil && !*delta.Archived {
 		delta.Archived = nil

@@ -27,12 +27,12 @@ import (
 	"sigs.k8s.io/release-utils/version"
 	"sigs.k8s.io/yaml"
 
-	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/options/root"
 	"github.com/relengfam/peribolos/org"
 )
 
 // New creates a new instance of the peribolos command.
-func New(o *options.Options) *cobra.Command {
+func New(o *root.Options) *cobra.Command {
 	cmd := &cobra.Command{
 		// TODO(cmd): Add peribolos usage
 		Use:   "",
@@ -56,7 +56,7 @@ func New(o *options.Options) *cobra.Command {
 	return cmd
 }
 
-func rootCmd(o *options.Options) error {
+func rootCmd(o *root.Options) error {
 	githubClient, err := o.GithubOpts.GitHubClient(!o.Confirm)
 	if err != nil {
 		logrus.WithError(err).Fatal("Error getting GitHub client.")

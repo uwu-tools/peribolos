@@ -24,13 +24,13 @@ import (
 	"k8s.io/test-infra/prow/logrusutil"
 
 	"github.com/relengfam/peribolos/cmd"
-	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/options/root"
 )
 
 func main() {
 	logrusutil.ComponentInit()
 
-	o := options.New()
+	o := root.NewOptions()
 	if o.UsingActions {
 		fmt.Println(">>> Running in GitHub Actions environment <<<")
 		err := o.ParseFromAction()

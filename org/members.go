@@ -27,14 +27,14 @@ import (
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
 
-	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/options/root"
 )
 
 type inviteClient interface {
 	ListOrgInvitations(org string) ([]github.OrgInvitation, error)
 }
 
-func orgInvitations(opt options.Options, client inviteClient, orgName string) (sets.String, error) {
+func orgInvitations(opt root.Options, client inviteClient, orgName string) (sets.String, error) {
 	invitees := sets.String{}
 	if !opt.FixOrgMembers && !opt.FixTeamMembers {
 		return invitees, nil
@@ -59,7 +59,7 @@ type orgClient interface {
 	UpdateOrgMembership(org, user string, admin bool) (*github.OrgMembership, error)
 }
 
-func configureOrgMembers(opt options.Options, client orgClient, orgName string, orgConfig org.Config, invitees sets.String) error {
+func configureOrgMembers(opt root.Options, client orgClient, orgName string, orgConfig org.Config, invitees sets.String) error {
 	// Get desired state
 	wantAdmins := sets.NewString(orgConfig.Admins...)
 	wantMembers := sets.NewString(orgConfig.Members...)

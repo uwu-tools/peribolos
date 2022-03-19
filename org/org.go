@@ -25,10 +25,10 @@ import (
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
 
-	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/options/root"
 )
 
-func Configure(opt options.Options, client github.Client, orgName string, orgConfig org.Config) error {
+func Configure(opt root.Options, client github.Client, orgName string, orgConfig org.Config) error {
 	// Ensure that metadata is configured correctly.
 	if !opt.FixOrg {
 		logrus.Infof("Skipping org metadata configuration")
