@@ -1,1 +1,8 @@
 coverage.out
+*.swp
+*.pyc
+*~
+/bazel-*
+.DS_Store
+.idea/
+_output/

@@ -27,7 +27,7 @@ import (
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
 
-	"github.com/relengfam/peribolos/options"
+	"github.com/relengfam/peribolos/options/root"
 )
 
 type teamClient interface {
@@ -196,7 +196,7 @@ func findTeam(teams map[string]github.Team, name string, previousNames ...string
 	return nil
 }
 
-func configureTeamAndMembers(opt options.Options, client github.Client, githubTeams map[string]github.Team, name, orgName string, team org.Team, parent *int) error {
+func configureTeamAndMembers(opt root.Options, client github.Client, githubTeams map[string]github.Team, name, orgName string, team org.Team, parent *int) error {
 	gt, ok := githubTeams[name]
 	if !ok { // configureTeams is buggy if this is the case
 		return fmt.Errorf("%s not found in id list", name)

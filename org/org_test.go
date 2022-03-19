@@ -24,14 +24,14 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/relengfam/peribolos/options"
-	"k8s.io/apimachinery/pkg/util/diff"
 
+	"k8s.io/apimachinery/pkg/util/diff"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
-
-	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/yaml"
+
+	"github.com/relengfam/peribolos/options/root"
 )
 
 type fakeClient struct {
@@ -346,7 +346,7 @@ func TestConfigureMembers(t *testing.T) {
 func TestConfigureOrgMembers(t *testing.T) {
 	cases := []struct {
 		name        string
-		opt         options.Options
+		opt         root.Options
 		config      org.Config
 		admins      []string
 		members     []string
@@ -358,7 +358,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 	}{
 		{
 			name: "too few admins",
-			opt: options.Options{
+			opt: root.Options{
 				MinAdmins: 5,
 			},
 			config: org.Config{
@@ -368,7 +368,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "remove too many admins",
-			opt: options.Options{
+			opt: root.Options{
 				MaxDelta: 0.3,
 			},
 			config: org.Config{
@@ -379,7 +379,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "forgot to add self",
-			opt: options.Options{
+			opt: root.Options{
 				RequireSelf: true,
 			},
 			config: org.Config{
@@ -389,7 +389,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		},
 		{
 			name: "forgot to add required admins",
-			opt: options.Options{
+			opt: root.Options{
 				RequiredAdmins: []string{"francis"},
 			},
 			err: true,
@@ -397,7 +397,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 		{
 			name:   "can remove self with flag",
 			config: org.Config{},
-			opt: options.Options{
+			opt: root.Options{
 				MaxDelta:    1,
 				RequireSelf: false,
 			},
@@ -502,7 +502,7 @@ func TestConfigureOrgMembers(t *testing.T) {
 				Admins:  []string{"keep-admin", "new-admin"},
 				Members: []string{"keep-member", "new-member"},
 			},
-			opt: options.Options{
+			opt: root.Options{
 				MaxDelta: 0.5,
 			},
 			admins:     []string{"keep-admin", "drop-admin"},
@@ -2034,7 +2034,7 @@ func fixup(ret *org.Config) {
 func TestOrgInvitations(t *testing.T) {
 	cases := []struct {
 		name     string
-		opt      options.Options
+		opt      root.Options
 		invitees sets.String // overrides
 		expected sets.String
 		err      bool
@@ -2046,7 +2046,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "call if FixOrgMembers",
-			opt: options.Options{
+			opt: root.Options{
 				FixOrgMembers: true,
 			},
 			invitees: sets.NewString("him", "her", "them"),
@@ -2054,7 +2054,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "call if FixTeamMembers",
-			opt: options.Options{
+			opt: root.Options{
 				FixTeamMembers: true,
 			},
 			invitees: sets.NewString("him", "her", "them"),
@@ -2062,7 +2062,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "ensure case normalization",
-			opt: options.Options{
+			opt: root.Options{
 				FixOrgMembers:  true,
 				FixTeamMembers: true,
 			},
@@ -2071,7 +2071,7 @@ func TestOrgInvitations(t *testing.T) {
 		},
 		{
 			name: "error if list fails",
-			opt: options.Options{
+			opt: root.Options{
 				FixTeamMembers: true,
 				FixOrgMembers:  true,
 			},
@@ -2508,7 +2508,7 @@ func TestConfigureRepos(t *testing.T) {
 
 	testCases := []struct {
 		description     string
-		opts            options.Options
+		opts            root.Options
 		orgConfig       org.Config
 		orgNameOverride string
 		repos           []github.FullRepo
@@ -2653,7 +2653,7 @@ func TestConfigureRepos(t *testing.T) {
 		},
 		{
 			description: "request to archive repo succeeds when allowed",
-			opts: options.Options{
+			opts: root.Options{
 				AllowRepoArchival: true,
 			},
 			orgConfig: org.Config{
@@ -2677,7 +2677,7 @@ func TestConfigureRepos(t *testing.T) {
 		},
 		{
 			description: "request to publish a private repo succeeds when allowed",
-			opts: options.Options{
+			opts: root.Options{
 				AllowRepoPublish: true,
 			},
 			orgConfig: org.Config{

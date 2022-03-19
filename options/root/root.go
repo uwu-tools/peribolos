@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package options
+package root
 
 import (
 	"flag"
@@ -66,7 +66,7 @@ type Options struct {
 	logLevel string
 }
 
-func New() Options {
+func NewOptions() Options {
 	o := new()
 	/*
 		if err := o.parseArgs(flag.CommandLine, os.Args[1:]); err != nil {
