@@ -7,7 +7,7 @@ replace k8s.io/client-go => k8s.io/client-go v0.22.5
 require (
 	github.com/caarlos0/env/v6 v6.9.1
 	github.com/ghodss/yaml v1.0.0
-	github.com/google/go-cmp v0.5.7
+	github.com/google/go-cmp v0.5.8
 	github.com/sethvargo/go-githubactions v0.5.3
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.4.0
