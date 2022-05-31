@@ -23,7 +23,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923 # v3.0.0
       with:
-        go-version: 1.17.x
+        go-version: 1.18.x
 
     - name: Build
       run: go build -v ./...
@@ -41,7 +41,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923 # v3.0.0
       with:
-        go-version: 1.17.x
+        go-version: 1.18.x
 
     - name: Test
       run: go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
@@ -64,7 +64,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@b22fbbc2921299758641fab08929b4ac52b32923 # v3.0.0
       with:
-        go-version: 1.17.x
+        go-version: 1.18.x
 
     - name: Install ko
       uses: imjasonh/setup-ko@2c3450ca27f6e6f2b02e72a40f2163c281a1f675 # v0.4
