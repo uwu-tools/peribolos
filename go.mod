@@ -10,7 +10,7 @@ require (
 	github.com/google/go-cmp v0.5.8
 	github.com/sethvargo/go-githubactions v1.0.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v1.4.0
+	github.com/spf13/cobra v1.5.0
 	k8s.io/apimachinery v0.22.9
 	k8s.io/test-infra v0.0.0-20211221011455-3d87616db8ae
 	sigs.k8s.io/release-utils v0.7.1
