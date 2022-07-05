@@ -59,10 +59,6 @@ type Options struct {
 	AllowRepoPublish  bool
 	GithubOpts        flagutil.GitHubOptions
 
-	// TODO(petr-muller): Remove after August 2021, replaced by github.ThrottleHourlyTokens
-	tokenBurst    int
-	tokensPerHour int
-
 	logLevel string
 }
 
@@ -209,12 +205,6 @@ func (o *Options) ParseFromAction() error {
 	if logLevel != "" {
 		o.logLevel = logLevel
 	}
-
-	// TODO(flags): Consider parameterizing flag.
-	o.GithubOpts.ThrottleHourlyTokens = o.tokensPerHour
-
-	// TODO(flags): Consider parameterizing flag.
-	o.GithubOpts.ThrottleAllowBurst = o.tokenBurst
 
 	return o.validateArgsForAction()
 }
