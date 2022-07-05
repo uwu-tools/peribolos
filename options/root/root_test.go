@@ -82,10 +82,6 @@ func TestOptions(t *testing.T) {
 			},
 		},
 		{
-			name: "reject burst > tokens",
-			args: []string{"--config-path=foo", "--tokens=10", "--token-burst=11"},
-		},
-		{
 			name: "reject dump and confirm",
 			args: []string{"--confirm", "--dump=frogger"},
 		},
@@ -96,17 +92,6 @@ func TestOptions(t *testing.T) {
 		{
 			name: "reject --fix-team-members without --fix-teams",
 			args: []string{"--config-path=foo", "--fix-team-members"},
-		},
-		{
-			name: "allow legacy disabled throttle",
-			args: []string{"--config-path=foo", "--tokens=0"},
-			expected: &Options{
-				Config:      "foo",
-				MinAdmins:   defaultMinAdmins,
-				RequireSelf: true,
-				MaxDelta:    defaultDelta,
-				logLevel:    "info",
-			},
 		},
 		{
 			name: "allow dump without config",
@@ -132,7 +117,7 @@ func TestOptions(t *testing.T) {
 		},
 		{
 			name: "full",
-			args: []string{"--config-path=foo", "--github-token-path=bar", "--github-endpoint=weird://url", "--confirm=true", "--require-self=false", "--tokens=5", "--token-burst=2", "--dump=", "--fix-org", "--fix-org-members", "--fix-teams", "--fix-team-members", "--log-level=debug"},
+			args: []string{"--config-path=foo", "--github-token-path=bar", "--github-endpoint=weird://url", "--confirm=true", "--require-self=false", "--dump=", "--fix-org", "--fix-org-members", "--fix-teams", "--fix-team-members", "--log-level=debug"},
 			expected: &Options{
 				Config:         "foo",
 				Confirm:        true,
