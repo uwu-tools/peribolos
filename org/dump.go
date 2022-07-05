@@ -29,8 +29,8 @@ type dumpClient interface {
 	GetOrg(name string) (*github.Organization, error)
 	ListOrgMembers(org, role string) ([]github.TeamMember, error)
 	ListTeams(org string) ([]github.Team, error)
-	ListTeamMembers(org string, id int, role string) ([]github.TeamMember, error)
-	ListTeamRepos(org string, id int) ([]github.Repo, error)
+	ListTeamMembersBySlug(org, teamSlug, role string) ([]github.TeamMember, error)
+	ListTeamReposBySlug(org, teamSlug string) ([]github.Repo, error)
 	GetRepo(owner, name string) (github.FullRepo, error)
 	GetRepos(org string, isUser bool) ([]github.Repo, error)
 	BotUser() (*github.UserData, error)
@@ -115,7 +115,7 @@ func Dump(client dumpClient, orgName string, ignoreSecretTeams bool) (*org.Confi
 			Children:    map[string]org.Team{},
 			Repos:       map[string]github.RepoPermissionLevel{},
 		}
-		maintainers, err := client.ListTeamMembers(orgName, t.ID, github.RoleMaintainer)
+		maintainers, err := client.ListTeamMembersBySlug(orgName, t.Slug, github.RoleMaintainer)
 		if err != nil {
 			return nil, fmt.Errorf("failed to list team %d(%s) maintainers: %w", t.ID, t.Name, err)
 		}
@@ -124,7 +124,7 @@ func Dump(client dumpClient, orgName string, ignoreSecretTeams bool) (*org.Confi
 			logger.WithField("login", m.Login).Debug("Recording maintainer.")
 			nt.Maintainers = append(nt.Maintainers, m.Login)
 		}
-		teamMembers, err := client.ListTeamMembers(orgName, t.ID, github.RoleMember)
+		teamMembers, err := client.ListTeamMembersBySlug(orgName, t.Slug, github.RoleMember)
 		if err != nil {
 			return nil, fmt.Errorf("failed to list team %d(%s) members: %w", t.ID, t.Name, err)
 		}
@@ -145,7 +145,7 @@ func Dump(client dumpClient, orgName string, ignoreSecretTeams bool) (*org.Confi
 			children[t.Parent.ID] = append(children[t.Parent.ID], t.ID)
 		}
 
-		repos, err := client.ListTeamRepos(orgName, t.ID)
+		repos, err := client.ListTeamReposBySlug(orgName, t.Slug)
 		if err != nil {
 			return nil, fmt.Errorf("failed to list team %d(%s) repos: %w", t.ID, t.Name, err)
 		}

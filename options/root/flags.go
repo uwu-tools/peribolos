@@ -99,20 +99,6 @@ func (o *Options) AddFlags(cmd *cobra.Command) {
 		"Mutate github if set",
 	)
 
-	cmd.Flags().IntVar(
-		&o.tokensPerHour,
-		flagTokens,
-		defaultTokens,
-		"Throttle hourly token consumption (0 to disable) DEPRECATED: use --github-hourly-tokens",
-	)
-
-	cmd.Flags().IntVar(
-		&o.tokenBurst,
-		flagTokenBurst,
-		defaultBurst,
-		"Allow consuming a subset of hourly tokens in a short burst. DEPRECATED: use --github-allowed-burst",
-	)
-
 	cmd.Flags().StringVar(
 		&o.Dump,
 		flagDump,
