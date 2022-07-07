@@ -26,7 +26,7 @@ SHELL := /usr/bin/env bash
 GITHUB_TOKEN_PATH ?=
 
 # intentionally hardcoded list to ensure it's high friction to remove someone
-ADMINS = cblecker fejta idvoretskyi mrbobbytables nikhita spiffxp
+ADMINS = cpanato justaugustus
 ORGS = $(shell find ./config -type d -mindepth 1 -maxdepth 1 | cut -d/ -f3)
 
 # use absolute path to ./_output, which is .gitignored
