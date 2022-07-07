@@ -47,5 +47,4 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - run: |
-        make ko-build
-        make sign-images
+        make build-sign-images

@@ -40,7 +40,6 @@ func NewOptions() *Options {
 		Orgs: flagMap{},
 	}
 
-	o.Validate()
 	return o
 }
 
