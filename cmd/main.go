@@ -54,6 +54,7 @@ func New(o *root.Options) *cobra.Command {
 	// Add sub-commands.
 	cmd.AddCommand(Merge())
 	cmd.AddCommand(version.Version())
+
 	return cmd
 }
 

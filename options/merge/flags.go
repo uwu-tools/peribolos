@@ -20,11 +20,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-
-	"k8s.io/test-infra/prow/config/org"
 )
 
 type flagMap map[string]string
@@ -78,22 +75,8 @@ func (o *Options) AddFlags(cmd *cobra.Command) {
 
 	for _, a := range cmd.Flags().Args() {
 		logrus.Print("Extra", a)
-		o.Orgs.Set(a)
+		_ = o.Orgs.Set(a)
 	}
-
-	// TODO(merge): Move into mergeCmd()
-	cfg, err := loadOrgs(*o)
-	if err != nil {
-		logrus.Fatalf("Failed to load orgs: %v", err)
-	}
-	pc := org.FullConfig{
-		Orgs: cfg,
-	}
-	out, err := yaml.Marshal(pc)
-	if err != nil {
-		logrus.Fatalf("Failed to marshal orgs: %v", err)
-	}
-	fmt.Println(string(out))
 }
 
 func parseKeyValue(s string) (string, string) {
