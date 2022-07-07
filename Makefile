@@ -13,11 +13,9 @@ ko-build:
 ko-local:
 	ko build --local --base-import-paths github.com/relengfam/peribolos
 
-imagerefs := $(shell cat imagerefs)
-sign-refs := $(foreach ref,$(imagerefs),$(ref))
-.PHONY: sign-images
-sign-images:
-	cosign sign -a GIT_TAG=$(GIT_TAG) -a GIT_HASH=$(GIT_HASH) $(sign-refs)
+.PHONY: build-sign-images
+build-sign-images: ko-build
+	GIT_HASH=$(GIT_HASH) GIT_TAG=$(GIT_TAG) ./scripts/sign-images.sh
 
 # kubernetes/org make targets
 # TODO(k-org): Remove once integrated into peribolos
@@ -45,10 +43,6 @@ MERGED_CONFIG := $(OUTPUT_DIR)/gen-config.yaml
 .PHONY: clean
 clean:
 	rm -rf $(OUTPUT_DIR)
-
-.PHONY: build
-build:
-	go build ./...
 
 .PHONY: merge
 merge: $(MERGE_CMD)
