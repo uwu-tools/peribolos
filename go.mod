@@ -13,7 +13,7 @@ require (
 	github.com/spf13/cobra v1.5.0
 	k8s.io/apimachinery v0.24.3
 	k8s.io/test-infra v0.0.0-20220701081723-ad3e4ab74c32
-	sigs.k8s.io/release-utils v0.7.2
+	sigs.k8s.io/release-utils v0.7.3
 	sigs.k8s.io/yaml v1.3.0
 )
 
