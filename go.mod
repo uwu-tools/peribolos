@@ -5,7 +5,7 @@ go 1.18
 replace k8s.io/client-go => k8s.io/client-go v0.24.2
 
 require (
-	github.com/caarlos0/env/v6 v6.10.0
+	github.com/caarlos0/env/v6 v6.10.1
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.5.9
 	github.com/sethvargo/go-githubactions v1.0.0
