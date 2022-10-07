@@ -37,7 +37,7 @@ jobs:
       uses: imjasonh/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.5
 
     - name: Install cosign
-      uses: sigstore/cosign-installer@ced07f21fb1da67979f539bbc6304c16c0677e76 # v2.2.0
+      uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88 # v2.2.0
 
     - name: Log into ghcr.io
       uses: docker/login-action@49ed152c8eca782a232dede0303416e8f356c37b # v1.14.1
