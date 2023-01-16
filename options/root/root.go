@@ -54,6 +54,7 @@ type Options struct {
 	FixTeams          bool
 	FixTeamRepos      bool
 	FixRepos          bool
+	IgnoreInvitees    bool
 	IgnoreSecretTeams bool
 	AllowRepoArchival bool
 	AllowRepoPublish  bool

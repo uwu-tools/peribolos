@@ -1201,7 +1201,7 @@ func TestConfigureTeamMembers(t *testing.T) {
 				newAdmins:  sets.String{},
 				newMembers: sets.String{},
 			}
-			err := configureTeamMembers(fc, "", gt, tc.team)
+			err := configureTeamMembers(fc, "", gt, tc.team, false)
 			switch {
 			case err != nil:
 				if !tc.err {

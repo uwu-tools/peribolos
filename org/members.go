@@ -36,7 +36,7 @@ type inviteClient interface {
 
 func orgInvitations(opt root.Options, client inviteClient, orgName string) (sets.String, error) {
 	invitees := sets.String{}
-	if !opt.FixOrgMembers && !opt.FixTeamMembers {
+	if (!opt.FixOrgMembers && !opt.FixTeamMembers) || opt.IgnoreInvitees {
 		return invitees, nil
 	}
 	is, err := client.ListOrgInvitations(orgName)
