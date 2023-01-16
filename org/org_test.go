@@ -1895,7 +1895,7 @@ func TestDumpOrgConfig(t *testing.T) {
 				repoPermissions: tc.repoPermissions,
 				repos:           tc.repos,
 			}
-			actual, err := Dump(fc, orgName, tc.ignoreSecretTeams)
+			actual, err := Dump(fc, orgName, tc.ignoreSecretTeams, "")
 			switch {
 			case err != nil:
 				if !tc.err {

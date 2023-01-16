@@ -65,7 +65,7 @@ func rootCmd(o *root.Options) error {
 	}
 
 	if o.Dump != "" {
-		ret, err := org.Dump(githubClient, o.Dump, o.IgnoreSecretTeams)
+		ret, err := org.Dump(githubClient, o.Dump, o.IgnoreSecretTeams, o.GithubOpts.AppID)
 		if err != nil {
 			logrus.WithError(err).Fatalf("Dump %s failed to collect current data.", o.Dump)
 		}

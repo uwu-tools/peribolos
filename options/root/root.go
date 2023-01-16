@@ -95,9 +95,14 @@ func (o *Options) validateArgsForAction() error {
 		return fmt.Errorf("--maximum-removal-delta=%f must be a non-negative number less than 1.0", o.MaxDelta)
 	}
 
-	if o.Confirm && o.Dump != "" {
+	if o.Confirm && o.Dump != "" && o.GithubOpts.AppID == "" {
 		return fmt.Errorf("--confirm cannot be used with --dump=%s", o.Dump)
 	}
+
+	if o.Dump != "" && !o.Confirm && o.GithubOpts.AppID != "" {
+		return fmt.Errorf("--confirm has to be used with --dump=%s and --github-app-id", o.Dump)
+	}
+
 	if o.Config == "" && o.Dump == "" {
 		return fmt.Errorf("--config-path or --dump required")
 	}
