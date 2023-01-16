@@ -18,7 +18,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -88,7 +88,7 @@ func rootCmd(o *root.Options) error {
 		return nil
 	}
 
-	raw, err := ioutil.ReadFile(o.Config)
+	raw, err := os.ReadFile(o.Config)
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not read --config-path file")
 	}
