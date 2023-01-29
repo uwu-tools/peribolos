@@ -20,7 +20,7 @@ jobs:
       actions: read
       contents: read
       id-token: write
-    
+
     env:
       COSIGN_EXPERIMENTAL: true
 
@@ -31,27 +31,21 @@ jobs:
           egress-policy: audit # TODO(workflow): change to 'egress-policy: block' after couple of runs
 
       - name: "Checkout code"
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v2.4.0
+        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
         with:
           persist-credentials: false
 
       - name: "Run analysis"
-        uses: ossf/scorecard-action@e38b1902ae4f44df626f11ba0734b14fb91f8f86 # v1.0.4
+        uses: ossf/scorecard-action@e38b1902ae4f44df626f11ba0734b14fb91f8f86 # v2.1.2
         with:
           results_file: results.sarif
           results_format: sarif
-          # Read-only PAT token. To create it,
-          # follow the steps in https://github.com/ossf/scorecard-action#pat-token-creation.
-          repo_token: ${{ secrets.SCORECARD_READ_TOKEN }}
-          # Publish the results to enable scorecard badges. For more details, see
-          # https://github.com/ossf/scorecard-action#publishing-results.
-          # For private repositories, `publish_results` will automatically be set to `false`,
-          # regardless of the value entered here.
+          repo_token: ${{ secrets.SCORECARD_TOKEN }}
           publish_results: true
 
       # Upload the results as artifacts (optional).
       - name: "Upload artifact"
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v2.3.1
+        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: SARIF file
           path: results.sarif
@@ -59,6 +53,6 @@ jobs:
 
       # Upload the results to GitHub's code scanning dashboard.
       - name: "Upload to code-scanning"
-        uses: github/codeql-action/upload-sarif@3ebbd71c74ef574dbc558c82f70e52732c8b44fe # v2.2.1
+        uses: github/codeql-action/upload-sarif@421a1b344fb0def373a0794a4051f19f207461ec # v2.2.1
         with:
           sarif_file: results.sarif
