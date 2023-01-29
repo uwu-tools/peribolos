@@ -1,4 +1,4 @@
-module github.com/relengfam/peribolos
+module github.com/uwu-tools/peribolos
 
 go 1.18
 

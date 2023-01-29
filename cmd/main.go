@@ -27,8 +27,8 @@ import (
 	"sigs.k8s.io/release-utils/version"
 	"sigs.k8s.io/yaml"
 
-	"github.com/relengfam/peribolos/options/root"
-	"github.com/relengfam/peribolos/org"
+	"github.com/uwu-tools/peribolos/options/root"
+	"github.com/uwu-tools/peribolos/org"
 )
 
 // New creates a new instance of the peribolos command.

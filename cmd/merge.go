@@ -19,7 +19,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/relengfam/peribolos/options/merge"
+	"github.com/uwu-tools/peribolos/options/merge"
 )
 
 func Merge() *cobra.Command {
