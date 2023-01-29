@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/test-infra/prow/config/org"
@@ -229,7 +228,7 @@ type editTeamClient interface {
 	EditTeam(org string, team github.Team) (*github.Team, error)
 }
 
-// configureTeam patches the team name/description/privacy when values differ
+// configureTeam patches the team name/description/privacy when values differ.
 func configureTeam(client editTeamClient, orgName, teamName string, team org.Team, gt github.Team, parent *int) error {
 	// Do we need to reconfigure any team settings?
 	patch := false
@@ -263,7 +262,6 @@ func configureTeam(client editTeamClient, orgName, teamName string, team org.Tea
 	if team.Privacy != nil && gt.Privacy != string(*team.Privacy) {
 		patch = true
 		gt.Privacy = string(*team.Privacy)
-
 	} else if team.Privacy == nil && (parent != nil || len(team.Children) > 0) && gt.Privacy != "closed" {
 		patch = true
 		gt.Privacy = github.PrivacyClosed // nested teams must be closed
@@ -379,7 +377,7 @@ type teamRepoClient interface {
 	RemoveTeamRepoBySlug(org, teamSlug, repo string) error
 }
 
-// configureTeamRepos updates the list of repos that the team has permissions for when necessary
+// configureTeamRepos updates the list of repos that the team has permissions for when necessary.
 func configureTeamRepos(client teamRepoClient, githubTeams map[string]github.Team, name, orgName string, team org.Team) error {
 	gt, ok := githubTeams[name]
 	if !ok { // configureTeams is buggy if this is the case

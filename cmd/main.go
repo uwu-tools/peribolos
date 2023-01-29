@@ -22,7 +22,6 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-
 	proworg "k8s.io/test-infra/prow/config/org"
 	"sigs.k8s.io/release-utils/version"
 	"sigs.k8s.io/yaml"

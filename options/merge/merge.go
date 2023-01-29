@@ -24,7 +24,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
-
 	"k8s.io/test-infra/prow/config/org"
 )
 
@@ -42,11 +41,9 @@ func NewOptions() *Options {
 	return o
 }
 
-var (
-	errValidate = errors.New("some options could not be validated")
-)
+var errValidate = errors.New("some options could not be validated")
 
-// Run merges org configuration files
+// Run merges org configuration files.
 func (o *Options) Run() error {
 	cfg, err := loadOrgs(*o)
 	if err != nil {
