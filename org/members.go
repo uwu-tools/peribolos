@@ -27,7 +27,7 @@ import (
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
 
-	"github.com/relengfam/peribolos/options/root"
+	"github.com/uwu-tools/peribolos/options/root"
 )
 
 type inviteClient interface {

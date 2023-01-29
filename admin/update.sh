@@ -26,6 +26,8 @@ readonly admins=(
   justaugustus
 )
 
+readonly min_admins="2"
+
 cd "${REPO_ROOT}"
 make update-prep
 cmd="${REPO_ROOT}/_output/bin/peribolos"
@@ -35,6 +37,7 @@ args=(
   --fix-org-members
   --fix-teams
   --fix-team-members
+  --min-admins="$min_admins"
   "${admins[@]/#/--required-admins=}"
 )
 

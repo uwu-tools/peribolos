@@ -1,17 +1,17 @@
 GIT_HASH ?= $(shell git rev-parse HEAD)
 GIT_TAG ?= $(shell git describe --tags --always --dirty)
 
-KO_DOCKER_REPO ?= ghcr.io/relengfam/peribolos
+KO_DOCKER_REPO ?= ghcr.io/uwu-tools/peribolos
 
 .PHONY: ko-build
 ko-build:
 	ko build --tags $(GIT_TAG),latest --bare \
 		--platform=linux/amd64 --image-refs imagerefs \
-		github.com/relengfam/peribolos
+		github.com/uwu-tools/peribolos
 
 .PHONY: ko-local
 ko-local:
-	ko build --local --base-import-paths github.com/relengfam/peribolos
+	ko build --local --base-import-paths github.com/uwu-tools/peribolos
 
 .PHONY: build-sign-images
 build-sign-images: ko-build

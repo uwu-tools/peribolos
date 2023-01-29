@@ -23,8 +23,8 @@ import (
 
 	"k8s.io/test-infra/prow/logrusutil"
 
-	"github.com/relengfam/peribolos/cmd"
-	"github.com/relengfam/peribolos/options/root"
+	"github.com/uwu-tools/peribolos/cmd"
+	"github.com/uwu-tools/peribolos/options/root"
 )
 
 func main() {
