@@ -1,4 +1,5 @@
-defaultBaseImage: gcr.io/distroless/base-debian10
+---
+defaultBaseImage: cgr.dev/chainguard/static
 
 builds:
 - id: peribolos
