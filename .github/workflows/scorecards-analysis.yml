@@ -19,6 +19,9 @@ jobs:
       security-events: write
       actions: read
       contents: read
+    
+    env:
+      COSIGN_EXPERIMENTAL: true
 
     steps:
       - name: Harden Runner
