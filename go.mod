@@ -13,9 +13,11 @@ require (
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.5.9
+	github.com/google/go-github/v48 v48.2.0
 	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
+	github.com/spf13/pflag v1.0.5
 	k8s.io/apimachinery v0.24.2
 	k8s.io/test-infra v0.0.0-20230130201249-27b8435f1305
 	sigs.k8s.io/release-utils v0.7.3
@@ -71,7 +73,6 @@ require (
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-containerregistry v0.8.1-0.20220216220642-00c59d91847c // indirect
 	github.com/google/go-github/v45 v45.2.0 // indirect
-	github.com/google/go-github/v48 v48.2.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.1-0.20210504230335-f78f29fc09ea // indirect
 	github.com/google/uuid v1.3.0 // indirect
@@ -106,7 +107,6 @@ require (
 	github.com/sethvargo/go-envconfig v0.8.0 // indirect
 	github.com/shurcooL/githubv4 v0.0.0-20221229060216-a8d4a561cc93 // indirect
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/tektoncd/pipeline v0.36.0 // indirect
 	github.com/trivago/tgo v1.0.7 // indirect
 	go.opencensus.io v0.23.0 // indirect
