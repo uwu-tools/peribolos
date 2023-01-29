@@ -1201,7 +1201,7 @@ func TestConfigureTeamMembers(t *testing.T) {
 				newAdmins:  sets.String{},
 				newMembers: sets.String{},
 			}
-			err := configureTeamMembers(fc, "", gt, tc.team)
+			err := configureTeamMembers(fc, "", gt, tc.team, false)
 			switch {
 			case err != nil:
 				if !tc.err {
@@ -1895,7 +1895,7 @@ func TestDumpOrgConfig(t *testing.T) {
 				repoPermissions: tc.repoPermissions,
 				repos:           tc.repos,
 			}
-			actual, err := Dump(fc, orgName, tc.ignoreSecretTeams)
+			actual, err := Dump(fc, orgName, tc.ignoreSecretTeams, "")
 			switch {
 			case err != nil:
 				if !tc.err {
@@ -2472,6 +2472,8 @@ func (f fakeRepoClient) UpdateRepo(owner, name string, want github.RepoUpdateReq
 	updateBool(&have.AllowSquashMerge, want.AllowSquashMerge)
 	updateBool(&have.AllowMergeCommit, want.AllowMergeCommit)
 	updateBool(&have.AllowRebaseMerge, want.AllowRebaseMerge)
+	updateString(&have.SquashMergeCommitTitle, want.SquashMergeCommitTitle)
+	updateString(&have.SquashMergeCommitMessage, want.SquashMergeCommitMessage)
 
 	f.repos[name] = have
 	return &have, nil
@@ -2898,6 +2900,8 @@ func TestNewRepoUpdateRequest(t *testing.T) {
 	homepage := "https://somewhe.re"
 	master := "master"
 	branch := "branch"
+	squashMergeCommitTitle := "PR_TITLE"
+	squashMergeCommitMessage := "COMMIT_MESSAGES"
 
 	testCases := []struct {
 		description string
@@ -2950,6 +2954,30 @@ func TestNewRepoUpdateRequest(t *testing.T) {
 				RepoRequest: github.RepoRequest{
 					Name:        &newRepoName,
 					Description: &description,
+				},
+			},
+		},
+		{
+			description: "request to update commit messages works",
+			current: github.FullRepo{
+				Repo: github.Repo{
+					Name: repoName,
+				},
+				SquashMergeCommitTitle:   "COMMIT_MESSAGES",
+				SquashMergeCommitMessage: "COMMIT_OR_PR_TITLE",
+			},
+			name: newRepoName,
+			newState: org.Repo{
+				Description:              &description,
+				SquashMergeCommitTitle:   &squashMergeCommitTitle,
+				SquashMergeCommitMessage: &squashMergeCommitMessage,
+			},
+			expected: github.RepoUpdateRequest{
+				RepoRequest: github.RepoRequest{
+					Name:                     &newRepoName,
+					Description:              &description,
+					SquashMergeCommitTitle:   &squashMergeCommitTitle,
+					SquashMergeCommitMessage: &squashMergeCommitMessage,
 				},
 			},
 		},

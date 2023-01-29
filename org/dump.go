@@ -36,7 +36,7 @@ type dumpClient interface {
 	BotUser() (*github.UserData, error)
 }
 
-func Dump(client dumpClient, orgName string, ignoreSecretTeams bool) (*org.Config, error) {
+func Dump(client dumpClient, orgName string, ignoreSecretTeams bool, appID string) (*org.Config, error) {
 	out := org.Config{}
 	meta, err := client.GetOrg(orgName)
 	if err != nil {
@@ -67,7 +67,7 @@ func Dump(client dumpClient, orgName string, ignoreSecretTeams bool) (*org.Confi
 	for _, m := range admins {
 		logrus.WithField("login", m.Login).Debug("Recording admin.")
 		out.Admins = append(out.Admins, m.Login)
-		if runningAs.Login == m.Login {
+		if runningAs.Login == m.Login || appID != "" {
 			runningAsAdmin = true
 		}
 	}

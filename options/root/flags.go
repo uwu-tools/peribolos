@@ -37,6 +37,7 @@ const (
 	flagTokenBurst        = "token-burst"
 	flagDump              = "dump"
 	flagDumpFull          = "dump-full"
+	flagIgnoreInvitees    = "ignore-invitees"
 	flagIgnoreSecretTeams = "ignore-secret-teams"
 	flagFixOrg            = "fix-org"
 	flagFixOrgMembers     = "fix-org-members"
@@ -111,6 +112,13 @@ func (o *Options) AddFlags(cmd *cobra.Command) {
 		flagDumpFull,
 		false,
 		"Output current config of the org as a valid input config file instead of a snippet",
+	)
+
+	cmd.Flags().BoolVar(
+		&o.IgnoreInvitees,
+		flagIgnoreInvitees,
+		false,
+		"Do not compare missing members with active invitations (compatibility for GitHub Enterprise)",
 	)
 
 	cmd.Flags().BoolVar(

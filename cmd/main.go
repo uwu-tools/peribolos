@@ -18,7 +18,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -65,7 +65,7 @@ func rootCmd(o *root.Options) error {
 	}
 
 	if o.Dump != "" {
-		ret, err := org.Dump(githubClient, o.Dump, o.IgnoreSecretTeams)
+		ret, err := org.Dump(githubClient, o.Dump, o.IgnoreSecretTeams, o.GithubOpts.AppID)
 		if err != nil {
 			logrus.WithError(err).Fatalf("Dump %s failed to collect current data.", o.Dump)
 		}
@@ -88,7 +88,7 @@ func rootCmd(o *root.Options) error {
 		return nil
 	}
 
-	raw, err := ioutil.ReadFile(o.Config)
+	raw, err := os.ReadFile(o.Config)
 	if err != nil {
 		logrus.WithError(err).Fatal("Could not read --config-path file")
 	}

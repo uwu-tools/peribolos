@@ -19,7 +19,6 @@ package merge
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -87,7 +86,7 @@ func (o *Options) Validate() error {
 }
 
 func unmarshal(path string) (*org.Config, error) {
-	buf, err := ioutil.ReadFile(path)
+	buf, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read: %v", err)
 	}

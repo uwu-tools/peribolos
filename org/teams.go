@@ -211,7 +211,7 @@ func configureTeamAndMembers(opt root.Options, client github.Client, githubTeams
 	// Configure team members
 	if !opt.FixTeamMembers {
 		logrus.Infof("Skipping %s member configuration", name)
-	} else if err = configureTeamMembers(client, orgName, gt, team); err != nil {
+	} else if err = configureTeamMembers(client, orgName, gt, team, opt.IgnoreInvitees); err != nil {
 		return fmt.Errorf("failed to update %s members: %w", name, err)
 	}
 
@@ -286,7 +286,7 @@ type teamMembersClient interface {
 }
 
 // configureTeamMembers will add/update people to the appropriate role on the team, and remove anyone else.
-func configureTeamMembers(client teamMembersClient, orgName string, gt github.Team, team org.Team) error {
+func configureTeamMembers(client teamMembersClient, orgName string, gt github.Team, team org.Team, ignoreInvitees bool) error {
 	// Get desired state
 	wantMaintainers := sets.NewString(team.Maintainers...)
 	wantMembers := sets.NewString(team.Members...)
@@ -311,9 +311,12 @@ func configureTeamMembers(client teamMembersClient, orgName string, gt github.Te
 		haveMaintainers.Insert(m.Login)
 	}
 
-	invitees, err := teamInvitations(client, orgName, gt.Slug)
-	if err != nil {
-		return fmt.Errorf("failed to list %s(%s) invitees: %w", gt.Slug, gt.Name, err)
+	invitees := sets.String{}
+	if !ignoreInvitees {
+		invitees, err = teamInvitations(client, orgName, gt.Slug)
+		if err != nil {
+			return fmt.Errorf("failed to list %s(%s) invitees: %w", gt.Slug, gt.Name, err)
+		}
 	}
 
 	adder := func(user string, super bool) error {

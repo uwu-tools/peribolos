@@ -19,7 +19,7 @@ package config
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"sort"
 	"strings"
 
@@ -44,7 +44,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	raw, err := ioutil.ReadFile(*configPath)
+	raw, err := os.ReadFile(*configPath)
 	if err != nil {
 		fmt.Printf("cannot read generated config.yaml from %s: %v\n", *configPath, err)
 		os.Exit(1)
@@ -65,7 +65,7 @@ type owners struct {
 }
 
 func readInto(path string, i interface{}) error {
-	buf, err := ioutil.ReadFile(path)
+	buf, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("read: %v", err)
 	}
