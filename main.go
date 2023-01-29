@@ -20,7 +20,6 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
-
 	"k8s.io/test-infra/prow/logrusutil"
 
 	"github.com/uwu-tools/peribolos/cmd"

@@ -24,7 +24,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
@@ -1218,7 +1217,6 @@ func TestConfigureTeamMembers(t *testing.T) {
 					t.Errorf("Wrong admins added: %v", err)
 				}
 			}
-
 		})
 	}
 }
@@ -1909,7 +1907,6 @@ func TestDumpOrgConfig(t *testing.T) {
 				if diff := cmp.Diff(actual, &tc.expected); diff != "" {
 					t.Errorf("did not get correct config, diff: %s", diff)
 				}
-
 			}
 		})
 	}
@@ -2162,7 +2159,7 @@ func (c *fakeTeamRepoClient) RemoveTeamRepoBySlug(org, teamSlug, repo string) er
 }
 
 func TestConfigureTeamRepos(t *testing.T) {
-	var testCases = []struct {
+	testCases := []struct {
 		name          string
 		githubTeams   map[string]github.Team
 		teamName      string

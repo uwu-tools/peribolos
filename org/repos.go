@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
@@ -138,7 +137,6 @@ func validateRepos(repos map[string]org.Repo) error {
 			normName := strings.ToLower(name)
 			seen[normName] = name
 		}
-
 	}
 
 	if len(dups) > 0 {

@@ -23,11 +23,10 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/ghodss/yaml"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/test-infra/prow/config/org"
 	"k8s.io/test-infra/prow/github"
-
-	"github.com/ghodss/yaml"
 )
 
 // TODO(config): Fix tests
