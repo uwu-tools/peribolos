@@ -13,7 +13,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	k8s.io/apimachinery v0.24.10
-	k8s.io/test-infra v0.0.0-20230116172652-b51567b824d9
+	k8s.io/test-infra v0.0.0-20230129093033-71d85066ab16
 	sigs.k8s.io/release-utils v0.7.3
 	sigs.k8s.io/yaml v1.3.0
 )
