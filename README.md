@@ -1,5 +1,7 @@
 # [not quite] `peribolos`
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/uwu-tools/peribolos/badge)](https://api.securityscorecards.dev/projects/github.com/uwu-tools/peribolos)
+
 Peribolos allows the org settings, teams and memberships to be declared in a yaml file. GitHub is then updated to match the declared configuration.
 
 - [Goals](#goals)
