@@ -5,6 +5,7 @@ Peribolos allows the org settings, teams and memberships to be declared in a yam
 - [Goals](#goals)
 - [Disclaimer](#disclaimer)
 - [TODO](#todo)
+- [Maintainers](#maintainers)
 - [Attribution](#attribution)
 - [Original documentation](#original-documentation)
   - [Etymology](#etymology)
@@ -51,6 +52,10 @@ maintainers can work on it.
 ## TODO
 
 See [here](/TODO.md).
+
+## Maintainers
+
+See [`CODEOWNERS`](/.github/CODEOWNERS).
 
 ## Attribution
 
