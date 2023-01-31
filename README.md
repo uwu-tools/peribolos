@@ -1,6 +1,19 @@
-# Peribolos Documentation
+# [not quite] `peribolos`
 
 Peribolos allows the org settings, teams and memberships to be declared in a yaml file. GitHub is then updated to match the declared configuration.
+
+- [TODO](#todo)
+- [Original documentation](#original-documentation)
+  - [Etymology](#etymology)
+  - [Org configuration](#org-configuration)
+    - [Initial seed](#initial-seed)
+  - [Settings](#settings)
+
+## TODO
+
+See [here](/TODO.md).
+
+## Original documentation
 
 See the [kubernetes/org] repo, in particular the [merge] and [`update.sh`] parts of that repo for this tool in action.
 
@@ -10,7 +23,7 @@ Peribolos was the subject of a KubeCon talk: [How Kubernetes Uses GitOps to Mana
 
 A [peribolos] is a wall that encloses a court in Greek/Roman architecture.
 
-## Org configuration
+### Org configuration
 
 Extend the primary prow [`config.yaml`] document to include a top-level `orgs` key that looks like the following:
 
@@ -59,25 +72,26 @@ orgs:
 ```
 
 This config will:
-* Ensure the org settings match the following:
+
+- Ensure the org settings match the following:
   - Set the company, email, name and descriptions fields for the org to foo
   - Allow projects to be created at the org and repo levels
   - Give everyone read access to repos by default
   - Disallow members from creating repositories
-* Ensure the following memberships exist:
+- Ensure the following memberships exist:
   - anne and bob are members, carl is an admin
-* Configure the node and another-team in the following manner:
+- Configure the node and another-team in the following manner:
   - Set node's description and privacy setting.
   - Rename the backend team to node
   - Add anne as a member and jane as a maintainer to node
   - Similar things for another-team (details elided)
-* Ensure that the team has admin rights to `some-repo`, read access to `other-repo` and no other privileges
+- Ensure that the team has admin rights to `some-repo`, read access to `other-repo` and no other privileges
 
 Note that any fields missing from the config will not be managed by peribolos. So if description is missing from the org setting, the current value will remain.
 
 For more details please see GitHub documentation around [edit org], [update org membership], [edit team], [update team membership].
 
-### Initial seed
+#### Initial seed
 
 Peribolos can dump the current configuration to an org. For example you could dump the kubernetes org do the following:
 
@@ -142,136 +156,25 @@ $ go run ./prow/cmd/peribolos --config-path ~/current.yaml --github-token-path ~
 ...
 ```
 
-
-
-## Settings
+### Settings
 
 In order to mitigate the chance of applying erroneous configs, the peribolos binary includes a few safety checks:
 
-* `--required-admins=` - a list of people who must be configured as admins in order to accept the config (defaults to empty list)
-* `--min-admins=5` - the config must specify at least this many admins
-* `--require-self=true` - require the bot applying the config to be an admin.
+- `--required-admins=` - a list of people who must be configured as admins in order to accept the config (defaults to empty list)
+- `--min-admins=5` - the config must specify at least this many admins
+- `--require-self=true` - require the bot applying the config to be an admin.
 
 These flags are designed to ensure that any problems can be corrected by rerunning the tool with a fixed config and/or binary.
 
-* `--maximum-removal-delta=0.25` - reject a config that deletes more than 25% of the current memberships.
+- `--maximum-removal-delta=0.25` - reject a config that deletes more than 25% of the current memberships.
 
 This flag is designed to protect against typos in the configuration which might cause massive, unwanted deletions. Raising this value to 1.0 will allow deleting everyone, and reducing it to 0.0 will prevent any deletions.
 
-* `--confirm=false` - no github mutations will be made until this flag is true. It is safe to run the binary without this flag. It will print what it would do, without actually making any changes.
+- `--confirm=false` - no github mutations will be made until this flag is true. It is safe to run the binary without this flag. It will print what it would do, without actually making any changes.
 
 See `go run ./prow/cmd/peribolos --help` for the full and current list of settings that can be configured with flags.
 
-## TODO
-
-### Replicate relevant Prow jobs
-
-#### trusted infra jobs
-
-```yaml
-postsubmits:
-  kubernetes/org:
-  - name: post-org-peribolos
-    cluster: test-infra-trusted
-    decorate: true
-    branches:
-    - ^main$
-    max_concurrency: 1
-    spec:
-      containers:
-      - image: golang:1.17
-        command:
-        - ./admin/update.sh
-        args:
-        - --github-endpoint=http://ghproxy.default.svc.cluster.local
-        - --github-endpoint=https://api.github.com
-        - --github-token-path=/etc/github-token/oauth
-        - --tokens=1200
-        - --confirm
-        volumeMounts:
-        - name: github
-          mountPath: /etc/github-token
-      volumes:
-      - name: github
-        secret:
-          secretName: oauth-token
-    annotations:
-      testgrid-alert-email: kubernetes-sig-testing-alerts@googlegroups.com, k8s-infra-oncall@google.com
-      testgrid-num-failures-to-alert: '1'
-...
-periodics:
-- interval: 24h
-  name: ci-org-peribolos
-  annotations:
-    testgrid-dashboards: sig-contribex-org
-    testgrid-tab-name: ci-peribolos
-    testgrid-alert-email: kubernetes-github-managment-alerts@googlegroups.com, k8s-infra-oncall@google.com
-    testgrid-num-failures-to-alert: '1'
-  cluster: test-infra-trusted
-  decorate: true
-  max_concurrency: 1
-  extra_refs:
-  - org: kubernetes
-    repo: org
-    base_ref: main
-  spec:
-    containers:
-    - image: golang:1.17
-      command:
-      - ./admin/update.sh
-      args:
-      - --github-endpoint=http://ghproxy.default.svc.cluster.local
-      - --github-endpoint=https://api.github.com
-      - --github-token-path=/etc/github-token/oauth
-      - --tokens=1200
-      - --confirm
-      volumeMounts:
-      - name: github
-        mountPath: /etc/github-token
-    volumes:
-    - name: github
-      secret:
-        secretName: oauth-token
-```
-
-#### k/org presubmits
-
-```yaml
-presubmits:
-  kubernetes/org:
-  - name: pull-org-test-all
-    always_run: true
-    decorate: true
-    labels:
-      preset-service-account: "true"
-    spec:
-      containers:
-      - image: golang:1.17
-        command:
-        - make
-        args:
-        - test
-    annotations:
-      testgrid-num-columns-recent: '30'
-      testgrid-create-test-group: 'true'
-  - name: pull-org-verify-all
-    always_run: true
-    decorate: true
-    labels:
-      preset-service-account: "true"
-    spec:
-      containers:
-      - image: golang:1.17
-        command:
-        - make
-        args:
-        - verify
-    annotations:
-      testgrid-num-columns-recent: '30'
-      testgrid-create-test-group: 'true'
-```
-
-[`config.yaml`]: /config/prow/config.yaml
+[`config.yaml`]: https://github.com/kubernetes/test-infra/tree/master/config/prow/config.yaml
 [edit team]: https://developer.github.com/v3/teams/#edit-team
 [edit org]: https://developer.github.com/v3/orgs/#edit-an-organization
 [peribolos]: https://en.wikipedia.org/wiki/Peribolos
