@@ -2,18 +2,66 @@
 
 Peribolos allows the org settings, teams and memberships to be declared in a yaml file. GitHub is then updated to match the declared configuration.
 
+- [Goals](#goals)
+- [Disclaimer](#disclaimer)
 - [TODO](#todo)
+- [Attribution](#attribution)
 - [Original documentation](#original-documentation)
   - [Etymology](#etymology)
   - [Org configuration](#org-configuration)
     - [Initial seed](#initial-seed)
   - [Settings](#settings)
 
+## Goals
+
+- Provide a GitHub Application (or Action) for GitHub organization management
+- Refactor `peribolos` into importable component packages
+- Remove/minimize k8s.io/test-infra surface area
+
+On the first note, [Operate First][operate-first] provides a
+[service][peribolos-as-a-service] for this, which you should check out to see
+if that's a fit for your use case.
+
+[operate-first]: https://www.operate-first.cloud/
+[peribolos-as-a-service]: https://github.com/operate-first/peribolos-as-a-service
+
+## Disclaimer
+
+Before getting started, it's important to note that the tooling stored here
+is a refactor of [an existing tool, `peribolos`](#attribution).
+
+We call that out to set the expectation that:
+
+- you may see duplicated code within the codebase
+- you may encounter multiple techniques/tools for accomplishing the same thing
+- you will encounter several TODOs
+- you will see gaps in documentation including:
+  - missing documentation
+  - example commands that may not work
+  - broken links
+
+This list is far from exhaustive.
+
+If you encounter issues, please search for existing issues/PRs in the
+repository and join the conversation.
+
+If you cannot find an existing issue, please file a detailed report, so that
+maintainers can work on it.
+
 ## TODO
 
 See [here](/TODO.md).
 
+## Attribution
+
+[Peribolos][peribolos] is created and maintained by the Kubernetes community.
+
 ## Original documentation
+
+_**NOTE: This is a [point-in-time snapshot][docs-snapshot] of the upstream [`peribolos` docs][peribolos-docs]**_
+
+[peribolos-docs]: https://docs.prow.k8s.io/docs/components/cli-tools/peribolos/
+[docs-snapshot]: https://github.com/kubernetes-sigs/prow/commit/9ce71a0a9f156f2a2aa0d9b4b573992a259e495f
 
 See the [kubernetes/org] repo, in particular the [merge] and [`update.sh`] parts of that repo for this tool in action.
 
