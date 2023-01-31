@@ -2,18 +2,22 @@ module github.com/uwu-tools/peribolos
 
 go 1.18
 
-replace k8s.io/client-go => k8s.io/client-go v0.24.10
+// When updating, ensure these match the dependency versions in k8s.io/test-infra.
+replace (
+	k8s.io/apimachinery => k8s.io/apimachinery v0.24.2
+	k8s.io/client-go => k8s.io/client-go v0.24.2
+)
 
 require (
-	github.com/airconduct/go-probot v0.0.3-0.20230130022618-71d90200ca38
+	github.com/airconduct/go-probot v0.0.3-0.20230130083304-c028097e50df
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/ghodss/yaml v1.0.0
 	github.com/google/go-cmp v0.5.9
 	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
-	k8s.io/apimachinery v0.24.10
-	k8s.io/test-infra v0.0.0-20230129093033-71d85066ab16
+	k8s.io/apimachinery v0.24.2
+	k8s.io/test-infra v0.0.0-20230130201249-27b8435f1305
 	sigs.k8s.io/release-utils v0.7.3
 	sigs.k8s.io/yaml v1.3.0
 )
@@ -112,12 +116,12 @@ require (
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	gocloud.dev v0.19.0 // indirect
 	golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd // indirect
-	golang.org/x/net v0.4.0 // indirect
+	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220608161450-d0670ef3b1eb // indirect
 	golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4 // indirect
-	golang.org/x/sys v0.3.0 // indirect
-	golang.org/x/term v0.3.0 // indirect
-	golang.org/x/text v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/term v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 	golang.org/x/time v0.0.0-20220411224347-583f2d630306 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 	gomodules.xyz/jsonpatch/v2 v2.2.0 // indirect
@@ -130,8 +134,8 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.24.10 // indirect
-	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible // indirect
+	k8s.io/api v0.24.2 // indirect
+	k8s.io/client-go v0.24.2 // indirect
 	k8s.io/component-base v0.24.2 // indirect
 	k8s.io/klog/v2 v2.70.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20220803162953-67bda5d908f1 // indirect
