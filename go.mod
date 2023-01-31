@@ -2,7 +2,11 @@ module github.com/uwu-tools/peribolos
 
 go 1.18
 
-replace k8s.io/client-go => k8s.io/client-go v0.24.10
+// When updating, ensure these match the dependency versions in k8s.io/test-infra.
+replace (
+	k8s.io/apimachinery => k8s.io/apimachinery v0.24.2
+	k8s.io/client-go => k8s.io/client-go v0.24.2
+)
 
 require (
 	github.com/airconduct/go-probot v0.0.3-0.20230130022618-71d90200ca38
@@ -12,7 +16,7 @@ require (
 	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
-	k8s.io/apimachinery v0.24.10
+	k8s.io/apimachinery v0.24.2
 	k8s.io/test-infra v0.0.0-20230129093033-71d85066ab16
 	sigs.k8s.io/release-utils v0.7.3
 	sigs.k8s.io/yaml v1.3.0
@@ -130,8 +134,8 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.24.10 // indirect
-	k8s.io/client-go v11.0.1-0.20190805182717-6502b5e7b1b5+incompatible // indirect
+	k8s.io/api v0.24.2 // indirect
+	k8s.io/client-go v0.24.2 // indirect
 	k8s.io/component-base v0.24.2 // indirect
 	k8s.io/klog/v2 v2.70.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20220803162953-67bda5d908f1 // indirect
