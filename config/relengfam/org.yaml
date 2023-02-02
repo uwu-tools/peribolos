@@ -12,16 +12,3 @@ has_repository_projects: true
 location: ""
 members_can_create_repositories: true
 name: ""
-repos:
-  .allstar:
-    default_branch: main
-    has_projects: true
-  artifacts:
-    default_branch: main
-    description: Kubernetes artifact promotion configurations
-    has_projects: true
-    homepage: https://artifacts.k8s.io/
-  discuss-test:
-    default_branch: main
-    has_projects: true
-    private: true
