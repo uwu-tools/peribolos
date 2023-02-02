@@ -19,6 +19,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -26,6 +27,7 @@ import (
 	"sigs.k8s.io/release-utils/version"
 	"sigs.k8s.io/yaml"
 
+	"github.com/uwu-tools/peribolos/options/merge"
 	"github.com/uwu-tools/peribolos/options/root"
 	"github.com/uwu-tools/peribolos/org"
 )
@@ -87,14 +89,48 @@ func rootCmd(o *root.Options) error {
 		return nil
 	}
 
-	raw, err := os.ReadFile(o.Config)
+	// Check if the config path exists
+	fileInfo, err := os.Stat(o.Config)
 	if err != nil {
-		logrus.WithError(err).Fatal("Could not read --config-path file")
+		logrus.WithError(err).Fatalf("Could not retrieve file info for %s", o.Config)
 	}
 
 	var cfg proworg.FullConfig
-	if err := yaml.Unmarshal(raw, &cfg); err != nil {
-		logrus.WithError(err).Fatal("Failed to load configuration")
+	var raw []byte
+	if fileInfo.IsDir() {
+		files, err := os.ReadDir(o.Config)
+		if err != nil {
+			logrus.WithError(err).Fatalf("Could not %s directory", o.Config)
+		}
+
+		mergeOpts := merge.NewOptions()
+		mergeOpts.MergeTeams = true
+		configFileName := "org.yaml"
+		for _, f := range files {
+			if f.IsDir() {
+				orgName := f.Name()
+				configPath := filepath.Join(o.Config, orgName, configFileName)
+
+				logrus.Infof("Adding config for org: %s", orgName)
+				mergeOpts.Orgs[orgName] = configPath
+			}
+		}
+
+		mergedConfig, err := mergeOpts.Run()
+		if err != nil {
+			logrus.WithError(err).Fatal("Merging org configs")
+		}
+
+		cfg = *mergedConfig
+	} else {
+		raw, err = os.ReadFile(o.Config)
+		if err != nil {
+			logrus.WithError(err).Fatal("Could not read --config-path file")
+		}
+
+		if err := yaml.Unmarshal(raw, &cfg); err != nil {
+			logrus.WithError(err).Fatal("Failed to load configuration")
+		}
 	}
 
 	for name, orgcfg := range cfg.Orgs {

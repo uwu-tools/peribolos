@@ -44,10 +44,10 @@ func NewOptions() *Options {
 var errValidate = errors.New("some options could not be validated")
 
 // Run merges org configuration files.
-func (o *Options) Run() error {
+func (o *Options) Run() (*org.FullConfig, error) {
 	cfg, err := loadOrgs(*o)
 	if err != nil {
-		return fmt.Errorf("Failed to load orgs: %v", err)
+		return nil, fmt.Errorf("loading orgs: %v", err)
 	}
 
 	pc := org.FullConfig{
@@ -55,11 +55,12 @@ func (o *Options) Run() error {
 	}
 	out, err := yaml.Marshal(pc)
 	if err != nil {
-		return fmt.Errorf("Failed to marshal orgs: %v", err)
+		return nil, fmt.Errorf("marshalling orgs: %v", err)
 	}
 
+	// TODO(merge): Consider adding options to output the config (via stdout, file)
 	fmt.Println(string(out))
-	return nil
+	return &pc, nil
 }
 
 // Validate validates merge options.

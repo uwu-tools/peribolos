@@ -22,17 +22,21 @@ REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
 readonly REPO_ROOT
 
 readonly admins=(
+  auggie-bot
   cpanato
   justaugustus
 )
 
-readonly min_admins="2"
+readonly min_admins="3"
+
+# TODO(merge): Consider making config path configurable
+readonly config_path="config"
 
 cd "${REPO_ROOT}"
 make update-prep
 cmd="${REPO_ROOT}/_output/bin/peribolos"
 args=(
-  --config-path="${REPO_ROOT}/_output/gen-config.yaml"
+  --config-path="$config_path"
   --fix-org
   --fix-org-members
   --fix-teams

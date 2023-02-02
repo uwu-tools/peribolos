@@ -44,5 +44,6 @@ func Merge() *cobra.Command {
 }
 
 func mergeCmd(o *merge.Options) error {
-	return o.Run()
+	_, err := o.Run()
+	return err
 }
