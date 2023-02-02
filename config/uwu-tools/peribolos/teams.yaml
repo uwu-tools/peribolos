@@ -1,0 +1,21 @@
+teams:
+  peribolos-admins:
+    description: ""
+    maintainers:
+    - justaugustus
+    - cpanato
+    members:
+    - detiber
+    privacy: closed
+    repos:
+      peribolos: admin
+  peribolos-maintainers:
+    description: ""
+    maintainers:
+    - justaugustus
+    - cpanato
+    members:
+    - detiber
+    privacy: closed
+    repos:
+      peribolos: maintain

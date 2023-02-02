@@ -2,7 +2,8 @@ admins:
 - auggie-bot
 - cpanato
 - justaugustus
-billing_email: fake@example.com
+- sethmccombs
+billing_email: foo@auggie.dev
 company: ""
 default_repository_permission: read
 description: ""
@@ -10,5 +11,7 @@ email: ""
 has_organization_projects: true
 has_repository_projects: true
 location: ""
+members:
+- detiber
 members_can_create_repositories: true
 name: ""

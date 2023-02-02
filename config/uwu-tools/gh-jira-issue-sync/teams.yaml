@@ -1,0 +1,19 @@
+teams:
+  gh-jira-issue-sync-admins:
+    description: ""
+    maintainers:
+    - justaugustus
+    members:
+    - detiber
+    privacy: closed
+    repos:
+      gh-jira-issue-sync: admin
+  gh-jira-issue-sync-maintainers:
+    description: ""
+    maintainers:
+    - justaugustus
+    members:
+    - detiber
+    privacy: closed
+    repos:
+      gh-jira-issue-sync: maintain

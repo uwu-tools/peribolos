@@ -41,6 +41,7 @@ args=(
   --fix-org-members
   --fix-teams
   --fix-team-members
+  --fix-team-repos
   --min-admins="$min_admins"
   "${admins[@]/#/--required-admins=}"
 )
