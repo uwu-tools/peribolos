@@ -63,7 +63,7 @@ verify:
 	./hack/verify.sh
 
 .PHONY: update-prep
-update-prep: config peribolos # TODO(merge): Fix this test "config test peribolos"
+update-prep: peribolos # TODO(merge): Fix this test "config test peribolos"
 
 .PHONY: deploy # --confirm
 deploy:

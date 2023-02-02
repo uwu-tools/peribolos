@@ -1,4 +1,5 @@
 admins:
+- auggie-bot
 - cpanato
 - justaugustus
 billing_email: fake@example.com
