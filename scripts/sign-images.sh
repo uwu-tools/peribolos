@@ -22,8 +22,6 @@ set -o pipefail
 : "${GIT_HASH:?Environment variable empty or not defined.}"
 : "${GIT_TAG:?Environment variable empty or not defined.}"
 
-export COSIGN_EXPERIMENTAL=true
-
 if [[ ! -f imagerefs ]]; then
     echo "imagerefs not found"
     exit 1
@@ -31,4 +29,4 @@ fi
 
 echo "Signing cosign images using Keyless..."
 
-cosign sign -a GIT_TAG="$GIT_TAG" -a GIT_HASH="$GIT_HASH" "$(cat imagerefs)"
+cosign sign --yes -a GIT_TAG="$GIT_TAG" -a GIT_HASH="$GIT_HASH" "$(cat imagerefs)"
