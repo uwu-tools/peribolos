@@ -20,8 +20,8 @@ package v1
 
 import (
 	rest "k8s.io/client-go/rest"
-	v1 "k8s.io/test-infra/prow/apis/prowjobs/v1"
-	"k8s.io/test-infra/prow/client/clientset/versioned/scheme"
+	v1 "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/apis/prowjobs/v1"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/client/clientset/versioned/scheme"
 )
 
 type ProwV1Interface interface {

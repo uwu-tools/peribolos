@@ -24,9 +24,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 	"k8s.io/apimachinery/pkg/util/sets"
-	"k8s.io/test-infra/prow/config/org"
-	"k8s.io/test-infra/prow/github"
 
 	"github.com/uwu-tools/peribolos/options/root"
 )

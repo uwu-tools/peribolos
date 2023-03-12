@@ -19,7 +19,7 @@ package org
 import (
 	"fmt"
 
-	"k8s.io/test-infra/prow/github"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 )
 
 // FullConfig stores the full configuration to be used by the tool, mapping

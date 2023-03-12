@@ -31,7 +31,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"k8s.io/test-infra/prow/git/types"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/git/types"
 )
 
 const github = "github.com"

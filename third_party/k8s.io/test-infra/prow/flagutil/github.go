@@ -30,10 +30,10 @@ import (
 	"github.com/sirupsen/logrus"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 
-	"k8s.io/test-infra/prow/config/secret"
-	"k8s.io/test-infra/prow/git"
-	gitv2 "k8s.io/test-infra/prow/git/v2"
-	"k8s.io/test-infra/prow/github"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/secret"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/git"
+	gitv2 "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/git/v2"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 )
 
 // GitHubOptions holds options for interacting with GitHub.

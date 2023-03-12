@@ -39,9 +39,9 @@ import (
 	ctrlruntimeclient "sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
-	prow "k8s.io/test-infra/prow/client/clientset/versioned"
-	prowv1 "k8s.io/test-infra/prow/client/clientset/versioned/typed/prowjobs/v1"
-	"k8s.io/test-infra/prow/kube"
+	prow "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/client/clientset/versioned"
+	prowv1 "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/client/clientset/versioned/typed/prowjobs/v1"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/kube"
 )
 
 func init() {

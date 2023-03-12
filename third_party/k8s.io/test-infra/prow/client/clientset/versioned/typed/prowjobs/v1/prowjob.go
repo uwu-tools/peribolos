@@ -26,8 +26,8 @@ import (
 	types "k8s.io/apimachinery/pkg/types"
 	watch "k8s.io/apimachinery/pkg/watch"
 	rest "k8s.io/client-go/rest"
-	v1 "k8s.io/test-infra/prow/apis/prowjobs/v1"
-	scheme "k8s.io/test-infra/prow/client/clientset/versioned/scheme"
+	v1 "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/apis/prowjobs/v1"
+	scheme "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/client/clientset/versioned/scheme"
 )
 
 // ProwJobsGetter has a method to return a ProwJobInterface.

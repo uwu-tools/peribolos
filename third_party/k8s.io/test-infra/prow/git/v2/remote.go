@@ -22,7 +22,7 @@ import (
 	"net/url"
 	"path"
 
-	gerritsource "k8s.io/test-infra/prow/gerrit/source"
+	gerritsource "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/gerrit/source"
 )
 
 // RemoteResolverFactory knows how to construct remote resolvers for

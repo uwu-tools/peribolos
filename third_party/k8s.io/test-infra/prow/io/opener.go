@@ -41,7 +41,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/testgrid/util/gcs" // TODO(fejta): move this logic here
 
-	"k8s.io/test-infra/prow/io/providers"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/io/providers"
 )
 
 const (

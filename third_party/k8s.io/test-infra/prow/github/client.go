@@ -42,8 +42,8 @@ import (
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/sets"
 
-	"k8s.io/test-infra/ghproxy/ghcache"
-	"k8s.io/test-infra/prow/version"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/ghproxy/ghcache"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/version"
 )
 
 type timeClient interface {

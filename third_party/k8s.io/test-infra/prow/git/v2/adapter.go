@@ -21,8 +21,8 @@ import (
 	"fmt"
 	"strings"
 
-	"k8s.io/test-infra/prow/git"
-	"k8s.io/test-infra/prow/git/types"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/git"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/git/types"
 )
 
 func OrgRepo(full string) (string, string, error) {

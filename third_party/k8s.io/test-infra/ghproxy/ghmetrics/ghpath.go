@@ -17,7 +17,7 @@ limitations under the License.
 package ghmetrics
 
 import (
-	"k8s.io/test-infra/prow/simplifypath"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/simplifypath"
 )
 
 func repositoryTree() []simplifypath.Node {

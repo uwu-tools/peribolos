@@ -31,7 +31,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go/v4"
 
-	"k8s.io/test-infra/ghproxy/ghcache"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/ghproxy/ghcache"
 )
 
 const (

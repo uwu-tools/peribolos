@@ -20,8 +20,8 @@ import (
 	"errors"
 	"flag"
 
-	"k8s.io/test-infra/prow/git/v2"
-	"k8s.io/test-infra/prow/github"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/git/v2"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 	utilpointer "k8s.io/utils/pointer"
 )
 

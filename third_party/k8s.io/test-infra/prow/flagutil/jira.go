@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"net/url"
 
-	"k8s.io/test-infra/prow/config/secret"
-	"k8s.io/test-infra/prow/jira"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/secret"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/jira"
 )
 
 type JiraOptions struct {

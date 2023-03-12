@@ -20,7 +20,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 
-	prowapi "k8s.io/test-infra/prow/apis/prowjobs/v1"
+	prowapi "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/apis/prowjobs/v1"
 )
 
 var (

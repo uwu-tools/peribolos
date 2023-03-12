@@ -24,8 +24,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/sets"
 
-	"k8s.io/test-infra/prow/secretutil"
-	"k8s.io/test-infra/prow/version"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/secretutil"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/version"
 )
 
 // DefaultFieldsFormatter wraps another logrus.Formatter, injecting

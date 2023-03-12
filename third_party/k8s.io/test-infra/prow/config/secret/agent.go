@@ -24,8 +24,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/util/sets"
 
-	"k8s.io/test-infra/prow/logrusutil"
-	"k8s.io/test-infra/prow/secretutil"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/logrusutil"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/secretutil"
 )
 
 // secretAgent is the singleton that loads secrets for us

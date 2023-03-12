@@ -32,7 +32,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	prowgithub "k8s.io/test-infra/prow/github"
+	prowgithub "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 )
 
 // ProwJobType specifies how the job is triggered.

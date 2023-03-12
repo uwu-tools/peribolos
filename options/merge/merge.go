@@ -24,7 +24,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
-	"k8s.io/test-infra/prow/config/org"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 )
 
 type Options struct {

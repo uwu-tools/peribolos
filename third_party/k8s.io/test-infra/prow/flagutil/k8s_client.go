@@ -23,9 +23,9 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/client/clientset/versioned"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/kube"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/test-infra/prow/client/clientset/versioned"
-	"k8s.io/test-infra/prow/kube"
 )
 
 // KubernetesClientOptions holds options for interacting with Kubernetes.

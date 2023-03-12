@@ -24,7 +24,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
 
-	"k8s.io/test-infra/prow/apis/prowjobs"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/apis/prowjobs"
 )
 
 func init() {

@@ -24,7 +24,7 @@ import (
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"
-	prowv1 "k8s.io/test-infra/prow/client/clientset/versioned/typed/prowjobs/v1"
+	prowv1 "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/client/clientset/versioned/typed/prowjobs/v1"
 )
 
 type Interface interface {
