@@ -22,7 +22,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"k8s.io/test-infra/prow/flagutil"
+	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/flagutil"
 )
 
 const (
