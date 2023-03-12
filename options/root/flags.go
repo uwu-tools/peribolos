@@ -27,17 +27,24 @@ import (
 
 const (
 	// Flags.
-	flagRequiredAdmins    = "required-admins"
-	flagMinAdmins         = "min-admins"
-	flagRequireSelf       = "require-self"
-	flagMaxRemovalDelta   = "maximum-removal-delta"
-	flagConfigPath        = "config-path"
-	flagConfirm           = "confirm"
-	flagTokens            = "tokens"
-	flagTokenBurst        = "token-burst"
-	flagDump              = "dump"
-	flagDumpFull          = "dump-full"
-	flagIgnoreInvitees    = "ignore-invitees"
+	// TODO(options): Consider grouping by function
+	// TODO(action): Missing input parameter
+	flagRequiredAdmins = "required-admins"
+	flagMinAdmins      = "min-admins"
+	flagRequireSelf    = "require-self"
+	// TODO(action): Missing input parameter
+	flagMaxRemovalDelta = "maximum-removal-delta"
+	flagConfigPath      = "config-path"
+	flagConfirm         = "confirm"
+	// TODO(action): Missing input parameter
+	flagTokens = "tokens"
+	// TODO(action): Missing input parameter
+	flagTokenBurst = "token-burst"
+	flagDump       = "dump"
+	flagDumpFull   = "dump-full"
+	// TODO(action): Missing input parameter
+	flagIgnoreInvitees = "ignore-invitees"
+	// TODO(action): Missing input parameter
 	flagIgnoreSecretTeams = "ignore-secret-teams"
 	flagFixOrg            = "fix-org"
 	flagFixOrgMembers     = "fix-org-members"
@@ -45,9 +52,11 @@ const (
 	flagFixTeamMembers    = "fix-team-members"
 	flagFixTeamRepos      = "fix-team-repos"
 	flagFixRepos          = "fix-repos"
+	// TODO(action): Missing input parameter
 	flagAllowRepoArchival = "allow-repo-archival"
-	flagAllowRepoPublish  = "allow-repo-publish"
-	flagLogLevel          = "log-level"
+	// TODO(action): Missing input parameter
+	flagAllowRepoPublish = "allow-repo-publish"
+	flagLogLevel         = "log-level"
 )
 
 // Command is an interface for handling options for command-line utilities.

@@ -34,6 +34,7 @@ const (
 	defaultBurst     = 100
 )
 
+// TODO(options): Consider grouping by function
 type Options struct {
 	// Infer if peribolos is running in a GitHub Action.
 	// The `CI` environment variable will always be set to "true" in a GitHub Action.
