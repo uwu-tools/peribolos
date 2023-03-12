@@ -2,12 +2,6 @@ module github.com/uwu-tools/peribolos
 
 go 1.18
 
-// When updating, ensure these match the dependency versions in k8s.io/test-infra.
-replace (
-	k8s.io/apimachinery => k8s.io/apimachinery v0.24.2
-	k8s.io/client-go => k8s.io/client-go v0.24.2
-)
-
 require (
 	cloud.google.com/go/storage v1.22.1
 	github.com/GoogleCloudPlatform/testgrid v0.0.123
