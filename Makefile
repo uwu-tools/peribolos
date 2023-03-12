@@ -11,7 +11,7 @@ ko-build:
 
 .PHONY: ko-local
 ko-local:
-	ko build --local --base-import-paths github.com/uwu-tools/peribolos
+	KO_DOCKER_REPO=ko.local ko build --base-import-paths github.com/uwu-tools/peribolos
 
 .PHONY: build-sign-images
 build-sign-images: ko-build
