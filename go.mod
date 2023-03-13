@@ -7,7 +7,7 @@ require (
 	github.com/GoogleCloudPlatform/testgrid v0.0.123
 	github.com/airconduct/go-probot v0.0.3
 	github.com/andygrunwald/go-jira v1.14.0
-	github.com/aws/aws-sdk-go v1.38.49
+	github.com/aws/aws-sdk-go v1.44.219
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/ghodss/yaml v1.0.0
