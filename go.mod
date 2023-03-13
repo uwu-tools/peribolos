@@ -18,7 +18,7 @@ require (
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/prometheus/client_golang v1.14.0
 	github.com/sethvargo/go-githubactions v1.1.0
-	github.com/shurcooL/githubv4 v0.0.0-20221229060216-a8d4a561cc93
+	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.6.1
 	go4.org v0.0.0-20201209231011-d4a079459e60
