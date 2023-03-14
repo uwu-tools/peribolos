@@ -27,36 +27,49 @@ import (
 
 const (
 	// Flags.
-	// TODO(options): Consider grouping by function
-	// TODO(action): Missing input parameter
-	flagRequiredAdmins = "required-admins"
-	flagMinAdmins      = "min-admins"
-	flagRequireSelf    = "require-self"
-	// TODO(action): Missing input parameter
-	flagMaxRemovalDelta = "maximum-removal-delta"
-	flagConfigPath      = "config-path"
-	flagConfirm         = "confirm"
-	// TODO(action): Missing input parameter
-	flagTokens = "tokens"
-	// TODO(action): Missing input parameter
-	flagTokenBurst = "token-burst"
+
+	// Configuration settings.
+	flagConfigPath = "config-path"
+	flagConfirm    = "confirm"
 	flagDump       = "dump"
 	flagDumpFull   = "dump-full"
+	flagLogLevel   = "log-level"
+
+	// Protections.
+	// TODO(action): Missing input parameter
+	flagMaxRemovalDelta = "maximum-removal-delta"
+	flagMinAdmins       = "min-admins"
+	flagRequireSelf     = "require-self"
+	// TODO(action): Missing input parameter
+	flagRequiredAdmins = "required-admins"
+
+	// Organization settings.
+	flagFixOrg = "fix-org"
 	// TODO(action): Missing input parameter
 	flagIgnoreInvitees = "ignore-invitees"
+
+	// Members settings.
+	flagFixOrgMembers = "fix-org-members"
+
+	// Team settings.
+	flagFixTeams       = "fix-teams"
+	flagFixTeamMembers = "fix-team-members"
+	flagFixTeamRepos   = "fix-team-repos"
 	// TODO(action): Missing input parameter
 	flagIgnoreSecretTeams = "ignore-secret-teams"
-	flagFixOrg            = "fix-org"
-	flagFixOrgMembers     = "fix-org-members"
-	flagFixTeams          = "fix-teams"
-	flagFixTeamMembers    = "fix-team-members"
-	flagFixTeamRepos      = "fix-team-repos"
-	flagFixRepos          = "fix-repos"
+
+	// Repo settings.
+	flagFixRepos = "fix-repos"
 	// TODO(action): Missing input parameter
 	flagAllowRepoArchival = "allow-repo-archival"
 	// TODO(action): Missing input parameter
 	flagAllowRepoPublish = "allow-repo-publish"
-	flagLogLevel         = "log-level"
+
+	// Prow GitHub settings.
+	// TODO(action): Missing input parameter
+	flagTokens = "tokens"
+	// TODO(action): Missing input parameter
+	flagTokenBurst = "token-burst"
 )
 
 // Command is an interface for handling options for command-line utilities.

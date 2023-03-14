@@ -34,33 +34,45 @@ const (
 	defaultBurst     = 100
 )
 
-// TODO(options): Consider grouping by function
 type Options struct {
+	// Configuration settings.
+
 	// Infer if peribolos is running in a GitHub Action.
 	// The `CI` environment variable will always be set to "true" in a GitHub Action.
 	// ref: https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables
-	UsingActions      bool `env:"CI"`
-	Config            string
-	Confirm           bool
-	Dump              string
-	DumpFull          bool
-	MaxDelta          float64
-	MinAdmins         int
-	RequireSelf       bool
-	RequiredAdmins    []string
-	FixOrg            bool
-	FixOrgMembers     bool
-	FixTeamMembers    bool
+	UsingActions bool `env:"CI"`
+	Config       string
+	Confirm      bool
+	Dump         string
+	DumpFull     bool
+	logLevel     string
+
+	// Protections.
+	MaxDelta       float64
+	MinAdmins      int
+	RequireSelf    bool
+	RequiredAdmins []string
+
+	// Organization settings.
+	FixOrg         bool
+	IgnoreInvitees bool
+
+	// Members settings.
+	FixOrgMembers bool
+
+	// Team settings.
 	FixTeams          bool
+	FixTeamMembers    bool
 	FixTeamRepos      bool
-	FixRepos          bool
-	IgnoreInvitees    bool
 	IgnoreSecretTeams bool
+
+	// Repo settings.
+	FixRepos          bool
 	AllowRepoArchival bool
 	AllowRepoPublish  bool
-	GithubOpts        flagutil.GitHubOptions
 
-	logLevel string
+	// Prow GitHub settings.
+	GithubOpts flagutil.GitHubOptions
 }
 
 func NewOptions() Options {
@@ -133,67 +145,81 @@ func (o *Options) validateArgsForAction() error {
 }
 
 func (o *Options) ParseFromAction() error {
-	ghFlags := flag.NewFlagSet("github-flags", flag.ContinueOnError)
-	o.GithubOpts.AddCustomizedFlags(ghFlags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
-
-	o.Dump = actions.GetInput(flagDump)
+	// Configuration settings.
 	o.Config = actions.GetInput(flagConfigPath)
-
-	dumpFull := actions.GetInput(flagDumpFull)
-	if dumpFull != "" {
-		o.DumpFull, _ = strconv.ParseBool(dumpFull)
-	}
 
 	confirm := actions.GetInput(flagConfirm)
 	if confirm != "" {
 		o.Confirm, _ = strconv.ParseBool(confirm)
 	}
 
+	o.Dump = actions.GetInput(flagDump)
+
+	dumpFull := actions.GetInput(flagDumpFull)
+	if dumpFull != "" {
+		o.DumpFull, _ = strconv.ParseBool(dumpFull)
+	}
+
+	o.logLevel = logrus.InfoLevel.String()
+	logLevel := actions.GetInput(flagLogLevel)
+	if logLevel != "" {
+		o.logLevel = logLevel
+	}
+
+	// Protections.
+	o.MinAdmins = defaultMinAdmins
+	minAdmins := actions.GetInput(flagMinAdmins)
+	if minAdmins != "" {
+		o.MinAdmins, _ = strconv.Atoi(minAdmins)
+	}
+
+	requireSelf := actions.GetInput(flagRequireSelf)
+	if requireSelf != "" {
+		o.RequireSelf, _ = strconv.ParseBool(requireSelf)
+	}
+
+	// Organization settings.
+	fixOrg := actions.GetInput(flagFixOrg)
+	if fixOrg != "" {
+		o.FixOrg, _ = strconv.ParseBool(fixOrg)
+	}
+
+	// Members settings.
+	fixOrgMembers := actions.GetInput(flagFixOrgMembers)
+	if fixOrgMembers != "" {
+		o.FixOrgMembers, _ = strconv.ParseBool(fixOrgMembers)
+	}
+
+	// Team settings.
+	fixTeams := actions.GetInput(flagFixTeams)
+	if fixTeams != "" {
+		o.FixTeams, _ = strconv.ParseBool(fixTeams)
+	}
+
+	fixTeamMembers := actions.GetInput(flagFixTeamMembers)
+	if fixTeamMembers != "" {
+		o.FixTeamMembers, _ = strconv.ParseBool(fixTeamMembers)
+	}
+
+	fixTeamRepos := actions.GetInput(flagFixTeamRepos)
+	if fixTeamRepos != "" {
+		o.FixTeamRepos, _ = strconv.ParseBool(fixTeamRepos)
+	}
+
+	// Repo settings.
+	fixRepos := actions.GetInput(flagFixRepos)
+	if fixRepos != "" {
+		o.FixRepos, _ = strconv.ParseBool(fixRepos)
+	}
+
+	// Prow GitHub settings.
+	ghFlags := flag.NewFlagSet("github-flags", flag.ContinueOnError)
+	o.GithubOpts.AddCustomizedFlags(ghFlags, flagutil.ThrottlerDefaults(defaultTokens, defaultBurst))
+
 	// TODO(flags): Consider parameterizing flag.
 	o.GithubOpts.TokenPath = actions.GetInput("github-token-path")
 	if o.GithubOpts.TokenPath == "" {
 		return fmt.Errorf("missing 'github-token-path'")
-	}
-
-	FixOrg := actions.GetInput(flagFixOrg)
-	if FixOrg != "" {
-		o.FixOrg, _ = strconv.ParseBool(FixOrg)
-	}
-
-	FixOrgMembers := actions.GetInput(flagFixOrgMembers)
-	if FixOrgMembers != "" {
-		o.FixOrgMembers, _ = strconv.ParseBool(FixOrgMembers)
-	}
-
-	FixTeams := actions.GetInput(flagFixTeams)
-	if FixTeams != "" {
-		o.FixTeams, _ = strconv.ParseBool(FixTeams)
-	}
-
-	FixTeamMembers := actions.GetInput(flagFixTeamMembers)
-	if FixTeamMembers != "" {
-		o.FixTeamMembers, _ = strconv.ParseBool(FixTeamMembers)
-	}
-
-	FixTeamRepos := actions.GetInput(flagFixTeamRepos)
-	if FixTeamRepos != "" {
-		o.FixTeamRepos, _ = strconv.ParseBool(FixTeamRepos)
-	}
-
-	FixRepos := actions.GetInput(flagFixRepos)
-	if FixRepos != "" {
-		o.FixRepos, _ = strconv.ParseBool(FixRepos)
-	}
-
-	o.MinAdmins = defaultMinAdmins
-	MinAdmins := actions.GetInput(flagMinAdmins)
-	if MinAdmins != "" {
-		o.MinAdmins, _ = strconv.Atoi(MinAdmins)
-	}
-
-	RequireSelf := actions.GetInput(flagRequireSelf)
-	if RequireSelf != "" {
-		o.RequireSelf, _ = strconv.ParseBool(RequireSelf)
 	}
 
 	throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
@@ -204,12 +230,6 @@ func (o *Options) ParseFromAction() error {
 	throttleAllowBurst := actions.GetInput("github-allowed-burst")
 	if throttleHourlyTokens != "" {
 		o.GithubOpts.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
-	}
-
-	o.logLevel = logrus.InfoLevel.String()
-	logLevel := actions.GetInput(flagLogLevel)
-	if logLevel != "" {
-		o.logLevel = logLevel
 	}
 
 	return o.validateArgsForAction()
