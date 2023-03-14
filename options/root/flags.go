@@ -36,34 +36,28 @@ const (
 	flagLogLevel   = "log-level"
 
 	// Protections.
-	// TODO(action): Missing input parameter
 	flagMaxRemovalDelta = "maximum-removal-delta"
 	flagMinAdmins       = "min-admins"
 	flagRequireSelf     = "require-self"
-	// TODO(action): Missing input parameter
-	flagRequiredAdmins = "required-admins"
+	flagRequiredAdmins  = "required-admins"
 
 	// Organization settings.
-	flagFixOrg = "fix-org"
-	// TODO(action): Missing input parameter
+	flagFixOrg         = "fix-org"
 	flagIgnoreInvitees = "ignore-invitees"
 
 	// Members settings.
 	flagFixOrgMembers = "fix-org-members"
 
 	// Team settings.
-	flagFixTeams       = "fix-teams"
-	flagFixTeamMembers = "fix-team-members"
-	flagFixTeamRepos   = "fix-team-repos"
-	// TODO(action): Missing input parameter
+	flagFixTeams          = "fix-teams"
+	flagFixTeamMembers    = "fix-team-members"
+	flagFixTeamRepos      = "fix-team-repos"
 	flagIgnoreSecretTeams = "ignore-secret-teams"
 
 	// Repo settings.
-	flagFixRepos = "fix-repos"
-	// TODO(action): Missing input parameter
+	flagFixRepos          = "fix-repos"
 	flagAllowRepoArchival = "allow-repo-archival"
-	// TODO(action): Missing input parameter
-	flagAllowRepoPublish = "allow-repo-publish"
+	flagAllowRepoPublish  = "allow-repo-publish"
 
 	// Prow GitHub settings.
 	// TODO(action): Missing input parameter

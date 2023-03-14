@@ -20,6 +20,7 @@ import (
 	"flag"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/caarlos0/env/v7"
 	actions "github.com/sethvargo/go-githubactions"
@@ -167,6 +168,12 @@ func (o *Options) ParseFromAction() error {
 	}
 
 	// Protections.
+	o.MaxDelta = defaultDelta
+	maxDelta := actions.GetInput(flagMaxRemovalDelta)
+	if maxDelta != "" {
+		o.MaxDelta, _ = strconv.ParseFloat(maxDelta, 64)
+	}
+
 	o.MinAdmins = defaultMinAdmins
 	minAdmins := actions.GetInput(flagMinAdmins)
 	if minAdmins != "" {
@@ -178,10 +185,21 @@ func (o *Options) ParseFromAction() error {
 		o.RequireSelf, _ = strconv.ParseBool(requireSelf)
 	}
 
+	requiredAdmins := actions.GetInput(flagRequiredAdmins)
+	if requiredAdmins != "" {
+		// TODO(options): Test this with unexpected inputs as well, including spaces between commas
+		o.RequiredAdmins = strings.Split(requiredAdmins, ",")
+	}
+
 	// Organization settings.
 	fixOrg := actions.GetInput(flagFixOrg)
 	if fixOrg != "" {
 		o.FixOrg, _ = strconv.ParseBool(fixOrg)
+	}
+
+	ignoreInvitees := actions.GetInput(flagIgnoreInvitees)
+	if ignoreInvitees != "" {
+		o.IgnoreInvitees, _ = strconv.ParseBool(ignoreInvitees)
 	}
 
 	// Members settings.
@@ -206,10 +224,25 @@ func (o *Options) ParseFromAction() error {
 		o.FixTeamRepos, _ = strconv.ParseBool(fixTeamRepos)
 	}
 
+	ignoreSecretTeams := actions.GetInput(flagIgnoreSecretTeams)
+	if ignoreSecretTeams != "" {
+		o.IgnoreSecretTeams, _ = strconv.ParseBool(ignoreSecretTeams)
+	}
+
 	// Repo settings.
 	fixRepos := actions.GetInput(flagFixRepos)
 	if fixRepos != "" {
 		o.FixRepos, _ = strconv.ParseBool(fixRepos)
+	}
+
+	allowRepoArchival := actions.GetInput(flagAllowRepoArchival)
+	if allowRepoArchival != "" {
+		o.AllowRepoArchival, _ = strconv.ParseBool(allowRepoArchival)
+	}
+
+	allowRepoPublish := actions.GetInput(flagAllowRepoPublish)
+	if allowRepoPublish != "" {
+		o.AllowRepoPublish, _ = strconv.ParseBool(allowRepoPublish)
 	}
 
 	// Prow GitHub settings.
@@ -222,11 +255,13 @@ func (o *Options) ParseFromAction() error {
 		return fmt.Errorf("missing 'github-token-path'")
 	}
 
+	// TODO(action): Is this actually required for GitHub Actions?
 	throttleHourlyTokens := actions.GetInput("github-hourly-tokens")
 	if throttleHourlyTokens != "" {
 		o.GithubOpts.ThrottleHourlyTokens, _ = strconv.Atoi(throttleHourlyTokens)
 	}
 
+	// TODO(action): Is this actually required for GitHub Actions?
 	throttleAllowBurst := actions.GetInput("github-allowed-burst")
 	if throttleHourlyTokens != "" {
 		o.GithubOpts.ThrottleAllowBurst, _ = strconv.Atoi(throttleAllowBurst)
