@@ -27,36 +27,43 @@ import (
 
 const (
 	// Flags.
-	// TODO(options): Consider grouping by function
-	// TODO(action): Missing input parameter
-	flagRequiredAdmins = "required-admins"
-	flagMinAdmins      = "min-admins"
-	flagRequireSelf    = "require-self"
-	// TODO(action): Missing input parameter
+
+	// Configuration settings.
+	flagConfigPath = "config-path"
+	flagConfirm    = "confirm"
+	flagDump       = "dump"
+	flagDumpFull   = "dump-full"
+	flagLogLevel   = "log-level"
+
+	// Protections.
 	flagMaxRemovalDelta = "maximum-removal-delta"
-	flagConfigPath      = "config-path"
-	flagConfirm         = "confirm"
+	flagMinAdmins       = "min-admins"
+	flagRequireSelf     = "require-self"
+	flagRequiredAdmins  = "required-admins"
+
+	// Organization settings.
+	flagFixOrg         = "fix-org"
+	flagIgnoreInvitees = "ignore-invitees"
+
+	// Members settings.
+	flagFixOrgMembers = "fix-org-members"
+
+	// Team settings.
+	flagFixTeams          = "fix-teams"
+	flagFixTeamMembers    = "fix-team-members"
+	flagFixTeamRepos      = "fix-team-repos"
+	flagIgnoreSecretTeams = "ignore-secret-teams"
+
+	// Repo settings.
+	flagFixRepos          = "fix-repos"
+	flagAllowRepoArchival = "allow-repo-archival"
+	flagAllowRepoPublish  = "allow-repo-publish"
+
+	// Prow GitHub settings.
 	// TODO(action): Missing input parameter
 	flagTokens = "tokens"
 	// TODO(action): Missing input parameter
 	flagTokenBurst = "token-burst"
-	flagDump       = "dump"
-	flagDumpFull   = "dump-full"
-	// TODO(action): Missing input parameter
-	flagIgnoreInvitees = "ignore-invitees"
-	// TODO(action): Missing input parameter
-	flagIgnoreSecretTeams = "ignore-secret-teams"
-	flagFixOrg            = "fix-org"
-	flagFixOrgMembers     = "fix-org-members"
-	flagFixTeams          = "fix-teams"
-	flagFixTeamMembers    = "fix-team-members"
-	flagFixTeamRepos      = "fix-team-repos"
-	flagFixRepos          = "fix-repos"
-	// TODO(action): Missing input parameter
-	flagAllowRepoArchival = "allow-repo-archival"
-	// TODO(action): Missing input parameter
-	flagAllowRepoPublish = "allow-repo-publish"
-	flagLogLevel         = "log-level"
 )
 
 // Command is an interface for handling options for command-line utilities.
