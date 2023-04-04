@@ -20,7 +20,7 @@ require (
 	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
 	github.com/sirupsen/logrus v1.9.0
-	github.com/spf13/cobra v1.6.1
+	github.com/spf13/cobra v1.7.0
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/oauth2 v0.6.0
 	golang.org/x/sync v0.1.0
@@ -53,7 +53,7 @@ require (
 	github.com/google/gofuzz v1.2.1-0.20210504230335-f78f29fc09ea // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-retryablehttp v0.7.2 // indirect
-	github.com/inconshreveable/mousetrap v1.0.1 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
