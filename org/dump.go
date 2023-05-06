@@ -127,6 +127,7 @@ func Dump(client dumpClient, orgName string, ignoreSecretTeams bool, appID strin
 		if err != nil {
 			return nil, fmt.Errorf("failed to list team %d(%s) members: %w", t.ID, t.Name, err)
 		}
+
 		logger.Debugf("Found %d members.", len(teamMembers))
 		for _, m := range teamMembers {
 			logger.WithField("login", m.Login).Debug("Recording member.")

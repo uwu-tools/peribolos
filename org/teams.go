@@ -210,7 +210,7 @@ func configureTeamAndMembers(opt root.Options, client github.Client, githubTeams
 	// Configure team members
 	if !opt.FixTeamMembers {
 		logrus.Infof("Skipping %s member configuration", name)
-	} else if err = configureTeamMembers(client, orgName, gt, team, opt.IgnoreInvitees); err != nil {
+	} else if err = configureTeamMembers(opt, client, orgName, gt, team, opt.IgnoreInvitees); err != nil {
 		return fmt.Errorf("failed to update %s members: %w", name, err)
 	}
 
@@ -284,7 +284,7 @@ type teamMembersClient interface {
 }
 
 // configureTeamMembers will add/update people to the appropriate role on the team, and remove anyone else.
-func configureTeamMembers(client teamMembersClient, orgName string, gt github.Team, team org.Team, ignoreInvitees bool) error {
+func configureTeamMembers(opt root.Options, client teamMembersClient, orgName string, gt github.Team, team org.Team, ignoreInvitees bool) error {
 	// Get desired state
 	wantMaintainers := sets.NewString(team.Maintainers...)
 	wantMembers := sets.NewString(team.Members...)
@@ -294,7 +294,9 @@ func configureTeamMembers(client teamMembersClient, orgName string, gt github.Te
 	haveMembers := sets.String{}
 
 	members, err := client.ListTeamMembersBySlug(orgName, gt.Slug, github.RoleMember)
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
+		logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve team members, ignoring...", gt.Slug)
+	} else if err != nil {
 		return fmt.Errorf("failed to list %s(%s) members: %w", gt.Slug, gt.Name, err)
 	}
 	for _, m := range members {
@@ -302,7 +304,9 @@ func configureTeamMembers(client teamMembersClient, orgName string, gt github.Te
 	}
 
 	maintainers, err := client.ListTeamMembersBySlug(orgName, gt.Slug, github.RoleMaintainer)
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
+		logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve team maintainers, ignoring...", gt.Slug)
+	} else if err != nil {
 		return fmt.Errorf("failed to list %s(%s) maintainers: %w", gt.Slug, gt.Name, err)
 	}
 	for _, m := range maintainers {
@@ -312,7 +316,9 @@ func configureTeamMembers(client teamMembersClient, orgName string, gt github.Te
 	invitees := sets.String{}
 	if !ignoreInvitees {
 		invitees, err = teamInvitations(client, orgName, gt.Slug)
-		if err != nil {
+		if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
+			logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve invitations, ignoring...", gt.Slug)
+		} else if err != nil {
 			return fmt.Errorf("failed to list %s(%s) invitees: %w", gt.Slug, gt.Name, err)
 		}
 	}
@@ -378,7 +384,7 @@ type teamRepoClient interface {
 }
 
 // configureTeamRepos updates the list of repos that the team has permissions for when necessary.
-func configureTeamRepos(client teamRepoClient, githubTeams map[string]github.Team, name, orgName string, team org.Team) error {
+func configureTeamRepos(opt root.Options, client teamRepoClient, githubTeams map[string]github.Team, name, orgName string, team org.Team) error {
 	gt, ok := githubTeams[name]
 	if !ok { // configureTeams is buggy if this is the case
 		return fmt.Errorf("%s not found in id list", name)
@@ -387,7 +393,9 @@ func configureTeamRepos(client teamRepoClient, githubTeams map[string]github.Tea
 	want := team.Repos
 	have := map[string]github.RepoPermissionLevel{}
 	repos, err := client.ListTeamReposBySlug(orgName, gt.Slug)
-	if err != nil {
+	if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
+		logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve team repos, ignoring...", gt.Slug)
+	} else if err != nil {
 		return fmt.Errorf("failed to list team %d(%s) repos: %w", gt.ID, name, err)
 	}
 	for _, repo := range repos {
@@ -435,7 +443,7 @@ func configureTeamRepos(client teamRepoClient, githubTeams map[string]github.Tea
 	}
 
 	for childName, childTeam := range team.Children {
-		if err := configureTeamRepos(client, githubTeams, childName, orgName, childTeam); err != nil {
+		if err := configureTeamRepos(opt, client, githubTeams, childName, orgName, childTeam); err != nil {
 			updateErrors = append(updateErrors, fmt.Errorf("failed to configure %s child team %s repos: %w", orgName, childName, err))
 		}
 	}

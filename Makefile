@@ -78,5 +78,5 @@ $(MERGED_CONFIG): $(MERGE_CMD) $(CONFIG_FILES)
 		$(shell for o in $(ORGS); do echo "--org-part=$$o=config/$$o/org.yaml"; done) \
 		> $(MERGED_CONFIG)
 
-$(PERIBOLOS_CMD):
-	go build -v -o $(PERIBOLOS_CMD)
+$(PERIBOLOS_CMD): clean
+	go build -v -trimpath -o $(PERIBOLOS_CMD)
