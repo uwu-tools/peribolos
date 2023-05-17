@@ -295,7 +295,7 @@ func configureTeamMembers(opt root.Options, client teamMembersClient, orgName st
 
 	members, err := client.ListTeamMembersBySlug(orgName, gt.Slug, github.RoleMember)
 	if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
-		logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve team members, ignoring...", gt.Slug)
+		logrus.Warnf("Running dry-run, Team %s does not exist yet, cannot retrieve team members, ignoring...", gt.Slug)
 	} else if err != nil {
 		return fmt.Errorf("failed to list %s(%s) members: %w", gt.Slug, gt.Name, err)
 	}
@@ -305,7 +305,7 @@ func configureTeamMembers(opt root.Options, client teamMembersClient, orgName st
 
 	maintainers, err := client.ListTeamMembersBySlug(orgName, gt.Slug, github.RoleMaintainer)
 	if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
-		logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve team maintainers, ignoring...", gt.Slug)
+		logrus.Warnf("Running dry-run, Team %s does not exist yet, cannot retrieve team maintainers, ignoring...", gt.Slug)
 	} else if err != nil {
 		return fmt.Errorf("failed to list %s(%s) maintainers: %w", gt.Slug, gt.Name, err)
 	}
@@ -317,7 +317,7 @@ func configureTeamMembers(opt root.Options, client teamMembersClient, orgName st
 	if !ignoreInvitees {
 		invitees, err = teamInvitations(client, orgName, gt.Slug)
 		if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
-			logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve invitations, ignoring...", gt.Slug)
+			logrus.Warnf("Running dry-run, Team %s does not exist yet, cannot retrieve invitations, ignoring...", gt.Slug)
 		} else if err != nil {
 			return fmt.Errorf("failed to list %s(%s) invitees: %w", gt.Slug, gt.Name, err)
 		}
@@ -394,7 +394,7 @@ func configureTeamRepos(opt root.Options, client teamRepoClient, githubTeams map
 	have := map[string]github.RepoPermissionLevel{}
 	repos, err := client.ListTeamReposBySlug(orgName, gt.Slug)
 	if err != nil && strings.Contains(err.Error(), "404") && !opt.Confirm {
-		logrus.Warnf("Runnning dry-run, Team %s does not exist yet, cannot retrieve team repos, ignoring...", gt.Slug)
+		logrus.Warnf("Running dry-run, Team %s does not exist yet, cannot retrieve team repos, ignoring...", gt.Slug)
 	} else if err != nil {
 		return fmt.Errorf("failed to list team %d(%s) repos: %w", gt.ID, name, err)
 	}
