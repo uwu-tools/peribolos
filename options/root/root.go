@@ -120,6 +120,7 @@ func (o *Options) validateArgsForAction() error {
 	if o.Config == "" && o.Dump == "" {
 		return fmt.Errorf("--config-path or --dump required")
 	}
+
 	if o.Config != "" && o.Dump != "" {
 		return fmt.Errorf("--config-path=%s and --dump=%s cannot both be set", o.Config, o.Dump)
 	}

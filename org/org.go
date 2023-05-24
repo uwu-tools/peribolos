@@ -75,7 +75,7 @@ func Configure(opt root.Options, client github.Client, orgName string, orgConfig
 			logrus.Infof("Skipping team repo permissions configuration")
 			continue
 		}
-		if err := configureTeamRepos(client, githubTeams, name, orgName, team); err != nil {
+		if err := configureTeamRepos(opt, client, githubTeams, name, orgName, team); err != nil {
 			return fmt.Errorf("failed to configure %s team %s repos: %w", orgName, name, err)
 		}
 	}

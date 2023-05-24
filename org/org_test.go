@@ -1200,7 +1200,10 @@ func TestConfigureTeamMembers(t *testing.T) {
 				newAdmins:  sets.String{},
 				newMembers: sets.String{},
 			}
-			err := configureTeamMembers(fc, "", gt, tc.team, false)
+
+			opts := root.Options{}
+
+			err := configureTeamMembers(opts, fc, "", gt, tc.team, false)
 			switch {
 			case err != nil:
 				if !tc.err {
@@ -2366,7 +2369,10 @@ func TestConfigureTeamRepos(t *testing.T) {
 			failUpdate: testCase.failUpdate,
 			failRemove: testCase.failRemove,
 		}
-		err := configureTeamRepos(&client, testCase.githubTeams, testCase.teamName, "org", testCase.team)
+
+		opts := root.Options{}
+
+		err := configureTeamRepos(opts, &client, testCase.githubTeams, testCase.teamName, "org", testCase.team)
 		if err == nil && testCase.expectedErr {
 			t.Errorf("%s: expected an error but got none", testCase.name)
 		}
