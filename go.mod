@@ -24,7 +24,7 @@ require (
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/oauth2 v0.10.0
 	golang.org/x/sync v0.3.0
-	k8s.io/apimachinery v0.27.3
+	k8s.io/apimachinery v0.27.4
 	k8s.io/utils v0.0.0-20230308161112-d77c459e9343
 	sigs.k8s.io/release-utils v0.7.4
 	sigs.k8s.io/yaml v1.3.0
