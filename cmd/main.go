@@ -128,7 +128,7 @@ func rootCmd(o *root.Options) error {
 			logrus.WithError(err).Fatal("Could not read --config-path file")
 		}
 
-		if err := yaml.Unmarshal(raw, &cfg); err != nil {
+		if err := yaml.UnmarshalStrict(raw, &cfg); err != nil {
 			logrus.WithError(err).Fatal("Failed to load configuration")
 		}
 	}

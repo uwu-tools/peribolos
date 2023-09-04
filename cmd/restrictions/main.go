@@ -111,7 +111,7 @@ func unmarshalPathToRestrictionsConfig(path string) (*Config, error) {
 		return nil, fmt.Errorf("read restrictions config: %v", err)
 	}
 	var restrictionsCfg Config
-	if err := yaml.Unmarshal(buf, &restrictionsCfg); err != nil {
+	if err := yaml.UnmarshalStrict(buf, &restrictionsCfg); err != nil {
 		return nil, fmt.Errorf("unmarshal restrictions config: %v", err)
 	}
 	return &restrictionsCfg, nil

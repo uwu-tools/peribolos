@@ -63,7 +63,7 @@ func UnmarshalPathToOrgConfig(path string) (*org.Config, error) {
 		return nil, fmt.Errorf("read: %v", err)
 	}
 	var cfg org.Config
-	if err := yaml.Unmarshal(buf, &cfg); err != nil {
+	if err := yaml.UnmarshalStrict(buf, &cfg); err != nil {
 		return nil, fmt.Errorf("unmarshal: %v", err)
 	}
 	return &cfg, nil
