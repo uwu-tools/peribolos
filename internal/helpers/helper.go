@@ -21,7 +21,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ghodss/yaml"
+	"sigs.k8s.io/yaml"
 
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 )

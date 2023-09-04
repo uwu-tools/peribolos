@@ -22,9 +22,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
+	"sigs.k8s.io/yaml"
 )
 
 type Options struct {

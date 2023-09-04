@@ -25,8 +25,8 @@ import (
 	"regexp"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
+	"sigs.k8s.io/yaml"
 
 	"github.com/uwu-tools/peribolos/internal/helpers"
 )

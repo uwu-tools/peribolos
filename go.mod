@@ -12,7 +12,6 @@ require (
 	github.com/bmatcuk/doublestar/v4 v4.6.0
 	github.com/caarlos0/env/v7 v7.1.0
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
-	github.com/ghodss/yaml v1.0.0
 	github.com/gomodule/redigo v1.8.9
 	github.com/google/go-cmp v0.5.9
 	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc
