@@ -9,6 +9,7 @@ replace github.com/gregjones/httpcache => github.com/alvaroaleman/httpcache v0.0
 
 require (
 	github.com/airconduct/go-probot v0.0.4
+	github.com/bmatcuk/doublestar v1.3.4
 	github.com/caarlos0/env/v7 v7.1.0
 	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/ghodss/yaml v1.0.0
