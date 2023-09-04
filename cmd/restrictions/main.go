@@ -24,7 +24,7 @@ import (
 	"path/filepath"
 	"regexp"
 
-	"github.com/bmatcuk/doublestar"
+	"github.com/bmatcuk/doublestar/v4"
 	"github.com/ghodss/yaml"
 	"github.com/sirupsen/logrus"
 
