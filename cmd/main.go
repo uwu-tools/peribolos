@@ -25,8 +25,8 @@ import (
 	"github.com/spf13/cobra"
 	proworg "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 	"sigs.k8s.io/release-utils/version"
-	"sigs.k8s.io/yaml"
 
+	"github.com/uwu-tools/peribolos/internal/yaml"
 	"github.com/uwu-tools/peribolos/options/merge"
 	"github.com/uwu-tools/peribolos/options/root"
 	"github.com/uwu-tools/peribolos/org"
@@ -128,7 +128,7 @@ func rootCmd(o *root.Options) error {
 			logrus.WithError(err).Fatal("Could not read --config-path file")
 		}
 
-		if err := yaml.UnmarshalStrict(raw, &cfg); err != nil {
+		if err := yaml.Unmarshal(raw, &cfg); err != nil {
 			logrus.WithError(err).Fatal("Failed to load configuration")
 		}
 	}

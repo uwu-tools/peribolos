@@ -21,9 +21,9 @@ import (
 	"os"
 	"strings"
 
-	"sigs.k8s.io/yaml"
-
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
+
+	"github.com/uwu-tools/peribolos/internal/yaml"
 )
 
 func ParseKeyValue(s string) (string, string) {
@@ -63,7 +63,7 @@ func UnmarshalPathToOrgConfig(path string) (*org.Config, error) {
 		return nil, fmt.Errorf("read: %v", err)
 	}
 	var cfg org.Config
-	if err := yaml.UnmarshalStrict(buf, &cfg); err != nil {
+	if err := yaml.Unmarshal(buf, &cfg); err != nil {
 		return nil, fmt.Errorf("unmarshal: %v", err)
 	}
 	return &cfg, nil

@@ -26,7 +26,8 @@ import (
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 	"k8s.io/apimachinery/pkg/util/sets"
-	"sigs.k8s.io/yaml"
+
+	"github.com/uwu-tools/peribolos/internal/yaml"
 )
 
 // TODO(config): Fix tests
@@ -49,7 +50,7 @@ func TestMain(m *testing.M) {
 		os.Exit(1)
 	}
 
-	if err := yaml.UnmarshalStrict(raw, &cfg); err != nil {
+	if err := yaml.Unmarshal(raw, &cfg); err != nil {
 		fmt.Printf("cannot unmarshal generated config.yaml from %s: %v\n", *configPath, err)
 		os.Exit(1)
 	}
@@ -68,7 +69,7 @@ func readInto(path string, i interface{}) error {
 	if err != nil {
 		return fmt.Errorf("read: %v", err)
 	}
-	if err := yaml.UnmarshalStrict(buf, i); err != nil {
+	if err := yaml.Unmarshal(buf, i); err != nil {
 		return fmt.Errorf("unmarshal: %v", err)
 	}
 	return nil
