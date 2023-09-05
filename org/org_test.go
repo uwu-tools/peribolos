@@ -32,20 +32,20 @@ import (
 )
 
 type fakeClient struct {
-	orgMembers sets.String
-	admins     sets.String
-	invitees   sets.String
-	members    sets.String
-	removed    sets.String
-	newAdmins  sets.String
-	newMembers sets.String
+	orgMembers sets.Set[string]
+	admins     sets.Set[string]
+	invitees   sets.Set[string]
+	members    sets.Set[string]
+	removed    sets.Set[string]
+	newAdmins  sets.Set[string]
+	newMembers sets.Set[string]
 }
 
 func (c *fakeClient) BotUser() (*github.UserData, error) {
 	return &github.UserData{Login: "me"}, nil
 }
 
-func (c fakeClient) makeMembers(people sets.String) []github.TeamMember {
+func (c fakeClient) makeMembers(people sets.Set[string]) []github.TeamMember {
 	var ret []github.TeamMember
 	for p := range people {
 		ret = append(ret, github.TeamMember{Login: p})
@@ -201,104 +201,104 @@ func TestConfigureMembers(t *testing.T) {
 		name     string
 		want     memberships
 		have     memberships
-		remove   sets.String
-		members  sets.String
-		supers   sets.String
-		invitees sets.String
+		remove   sets.Set[string]
+		members  sets.Set[string]
+		supers   sets.Set[string]
+		invitees sets.Set[string]
 		err      bool
 	}{
 		{
 			name: "forgot to remove duplicate entry",
 			want: memberships{
-				members: sets.NewString("me"),
-				super:   sets.NewString("me"),
+				members: sets.New[string]("me"),
+				super:   sets.New[string]("me"),
 			},
 			err: true,
 		},
 		{
 			name: "removal fails",
 			have: memberships{
-				members: sets.NewString("fail"),
+				members: sets.New[string]("fail"),
 			},
 			err: true,
 		},
 		{
 			name: "adding admin fails",
 			want: memberships{
-				super: sets.NewString("fail"),
+				super: sets.New[string]("fail"),
 			},
 			err: true,
 		},
 		{
 			name: "adding member fails",
 			want: memberships{
-				members: sets.NewString("fail"),
+				members: sets.New[string]("fail"),
 			},
 			err: true,
 		},
 		{
 			name: "promote to admin",
 			have: memberships{
-				members: sets.NewString("promote"),
+				members: sets.New[string]("promote"),
 			},
 			want: memberships{
-				super: sets.NewString("promote"),
+				super: sets.New[string]("promote"),
 			},
-			supers: sets.NewString("promote"),
+			supers: sets.New[string]("promote"),
 		},
 		{
 			name: "downgrade to member",
 			have: memberships{
-				super: sets.NewString("downgrade"),
+				super: sets.New[string]("downgrade"),
 			},
 			want: memberships{
-				members: sets.NewString("downgrade"),
+				members: sets.New[string]("downgrade"),
 			},
-			members: sets.NewString("downgrade"),
+			members: sets.New[string]("downgrade"),
 		},
 		{
 			name: "some of everything",
 			have: memberships{
-				super:   sets.NewString("keep-admin", "drop-admin"),
-				members: sets.NewString("keep-member", "drop-member"),
+				super:   sets.New[string]("keep-admin", "drop-admin"),
+				members: sets.New[string]("keep-member", "drop-member"),
 			},
 			want: memberships{
-				members: sets.NewString("keep-member", "new-member"),
-				super:   sets.NewString("keep-admin", "new-admin"),
+				members: sets.New[string]("keep-member", "new-member"),
+				super:   sets.New[string]("keep-admin", "new-admin"),
 			},
-			remove:  sets.NewString("drop-admin", "drop-member"),
-			members: sets.NewString("new-member"),
-			supers:  sets.NewString("new-admin"),
+			remove:  sets.New[string]("drop-admin", "drop-member"),
+			members: sets.New[string]("new-member"),
+			supers:  sets.New[string]("new-admin"),
 		},
 		{
 			name: "ensure case insensitivity",
 			have: memberships{
-				super:   sets.NewString("lower"),
-				members: sets.NewString("UPPER"),
+				super:   sets.New[string]("lower"),
+				members: sets.New[string]("UPPER"),
 			},
 			want: memberships{
-				super:   sets.NewString("Lower"),
-				members: sets.NewString("UpPeR"),
+				super:   sets.New[string]("Lower"),
+				members: sets.New[string]("UpPeR"),
 			},
 		},
 		{
 			name: "remove invites for those not in org config",
 			have: memberships{
-				members: sets.NewString("member-one", "member-two"),
+				members: sets.New[string]("member-one", "member-two"),
 			},
 			want: memberships{
-				members: sets.NewString("member-one", "member-two"),
+				members: sets.New[string]("member-one", "member-two"),
 			},
-			remove:   sets.NewString("member-three"),
-			invitees: sets.NewString("member-three"),
+			remove:   sets.New[string]("member-three"),
+			invitees: sets.New[string]("member-three"),
 		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			removed := sets.String{}
-			members := sets.String{}
-			supers := sets.String{}
+			removed := sets.Set[string]{}
+			members := sets.Set[string]{}
+			supers := sets.Set[string]{}
 			adder := func(user string, super bool) error {
 				if user == "fail" {
 					return fmt.Errorf("injected adder failure for %s", user)
@@ -328,11 +328,11 @@ func TestConfigureMembers(t *testing.T) {
 			case tc.err:
 				t.Errorf("Failed to receive error")
 			default:
-				if err := cmpLists(tc.remove.List(), removed.List()); err != nil {
+				if err := cmpLists(sets.List(tc.remove), sets.List(removed)); err != nil {
 					t.Errorf("Wrong users removed: %v", err)
-				} else if err := cmpLists(tc.members.List(), members.List()); err != nil {
+				} else if err := cmpLists(sets.List(tc.members), sets.List(members)); err != nil {
 					t.Errorf("Wrong members added: %v", err)
-				} else if err := cmpLists(tc.supers.List(), supers.List()); err != nil {
+				} else if err := cmpLists(sets.List(tc.supers), sets.List(supers)); err != nil {
 					t.Errorf("Wrong supers added: %v", err)
 				}
 			}
@@ -521,14 +521,14 @@ func TestConfigureOrgMembers(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			fc := &fakeClient{
-				admins:     sets.NewString(tc.admins...),
-				members:    sets.NewString(tc.members...),
-				removed:    sets.String{},
-				newAdmins:  sets.String{},
-				newMembers: sets.String{},
+				admins:     sets.New[string](tc.admins...),
+				members:    sets.New[string](tc.members...),
+				removed:    sets.Set[string]{},
+				newAdmins:  sets.Set[string]{},
+				newMembers: sets.Set[string]{},
 			}
 
-			err := configureOrgMembers(tc.opt, fc, fakeOrg, tc.config, sets.NewString(tc.invitations...))
+			err := configureOrgMembers(tc.opt, fc, fakeOrg, tc.config, sets.New[string](tc.invitations...))
 			switch {
 			case err != nil:
 				if !tc.err {
@@ -537,11 +537,11 @@ func TestConfigureOrgMembers(t *testing.T) {
 			case tc.err:
 				t.Errorf("Failed to receive error")
 			default:
-				if err := cmpLists(tc.remove, fc.removed.List()); err != nil {
+				if err := cmpLists(tc.remove, sets.List(fc.removed)); err != nil {
 					t.Errorf("Wrong users removed: %v", err)
-				} else if err := cmpLists(tc.addMembers, fc.newMembers.List()); err != nil {
+				} else if err := cmpLists(tc.addMembers, sets.List(fc.newMembers)); err != nil {
 					t.Errorf("Wrong members added: %v", err)
-				} else if err := cmpLists(tc.addAdmins, fc.newAdmins.List()); err != nil {
+				} else if err := cmpLists(tc.addAdmins, sets.List(fc.newAdmins)); err != nil {
 					t.Errorf("Wrong admins added: %v", err)
 				}
 			}
@@ -930,7 +930,7 @@ func TestConfigureTeams(t *testing.T) {
 					t.Errorf("%s still present: %#v", slug, team)
 				}
 			}
-			original, current, deleted := sets.NewString(), sets.NewString(), sets.NewString(tc.deleted...)
+			original, current, deleted := sets.New[string](), sets.New[string](), sets.New[string](tc.deleted...)
 			for _, team := range tc.teams {
 				original.Insert(team.Slug)
 			}
@@ -938,7 +938,7 @@ func TestConfigureTeams(t *testing.T) {
 				current.Insert(slug)
 			}
 			if unexpected := original.Difference(current).Difference(deleted); unexpected.Len() > 0 {
-				t.Errorf("the following teams were unexpectedly deleted: %v", unexpected.List())
+				t.Errorf("the following teams were unexpectedly deleted: %v", sets.List(unexpected))
 			}
 		})
 	}
@@ -1124,13 +1124,13 @@ func TestConfigureTeamMembers(t *testing.T) {
 	cases := []struct {
 		name           string
 		err            bool
-		members        sets.String
-		maintainers    sets.String
-		remove         sets.String
-		addMembers     sets.String
-		addMaintainers sets.String
+		members        sets.Set[string]
+		maintainers    sets.Set[string]
+		remove         sets.Set[string]
+		addMembers     sets.Set[string]
+		addMaintainers sets.Set[string]
 		ignoreInvitees bool
-		invitees       sets.String
+		invitees       sets.Set[string]
 		team           org.Team
 		slug           string
 	}{
@@ -1141,7 +1141,7 @@ func TestConfigureTeamMembers(t *testing.T) {
 		},
 		{
 			name:    "fail when removal fails",
-			members: sets.NewString("fail"),
+			members: sets.New[string]("fail"),
 			err:     true,
 		},
 		{
@@ -1157,11 +1157,11 @@ func TestConfigureTeamMembers(t *testing.T) {
 				Maintainers: []string{"keep-maintainer", "new-maintainer"},
 				Members:     []string{"keep-member", "new-member"},
 			},
-			maintainers:    sets.NewString("keep-maintainer", "drop-maintainer"),
-			members:        sets.NewString("keep-member", "drop-member"),
-			remove:         sets.NewString("drop-maintainer", "drop-member"),
-			addMembers:     sets.NewString("new-member"),
-			addMaintainers: sets.NewString("new-maintainer"),
+			maintainers:    sets.New[string]("keep-maintainer", "drop-maintainer"),
+			members:        sets.New[string]("keep-member", "drop-member"),
+			remove:         sets.New[string]("drop-maintainer", "drop-member"),
+			addMembers:     sets.New[string]("new-member"),
+			addMaintainers: sets.New[string]("new-maintainer"),
 		},
 		{
 			name: "do not reinvitee invitees",
@@ -1169,8 +1169,8 @@ func TestConfigureTeamMembers(t *testing.T) {
 				Maintainers: []string{"invited-maintainer", "newbie"},
 				Members:     []string{"invited-member"},
 			},
-			invitees:       sets.NewString("invited-maintainer", "invited-member"),
-			addMaintainers: sets.NewString("newbie"),
+			invitees:       sets.New[string]("invited-maintainer", "invited-member"),
+			addMaintainers: sets.New[string]("newbie"),
 		},
 		{
 			name: "do not remove pending invitees",
@@ -1178,9 +1178,9 @@ func TestConfigureTeamMembers(t *testing.T) {
 				Maintainers: []string{"keep-maintainer"},
 				Members:     []string{"invited-member"},
 			},
-			maintainers: sets.NewString("keep-maintainer"),
-			invitees:    sets.NewString("invited-member"),
-			remove:      sets.String{},
+			maintainers: sets.New[string]("keep-maintainer"),
+			invitees:    sets.New[string]("invited-member"),
+			remove:      sets.Set[string]{},
 		},
 		{
 			name: "ignore invitees",
@@ -1188,11 +1188,11 @@ func TestConfigureTeamMembers(t *testing.T) {
 				Maintainers: []string{"keep-maintainer"},
 				Members:     []string{"keep-member", "new-member"},
 			},
-			maintainers:    sets.NewString("keep-maintainer"),
-			members:        sets.NewString("keep-member"),
-			invitees:       sets.String{},
-			remove:         sets.String{},
-			addMembers:     sets.NewString("new-member"),
+			maintainers:    sets.New[string]("keep-maintainer"),
+			members:        sets.New[string]("keep-member"),
+			invitees:       sets.Set[string]{},
+			remove:         sets.Set[string]{},
+			addMembers:     sets.New[string]("new-member"),
 			ignoreInvitees: true,
 		},
 	}
@@ -1207,12 +1207,12 @@ func TestConfigureTeamMembers(t *testing.T) {
 		}
 		t.Run(tc.name, func(t *testing.T) {
 			fc := &fakeClient{
-				admins:     sets.StringKeySet(tc.maintainers),
-				members:    sets.StringKeySet(tc.members),
-				invitees:   sets.StringKeySet(tc.invitees),
-				removed:    sets.String{},
-				newAdmins:  sets.String{},
-				newMembers: sets.String{},
+				admins:     sets.KeySet[string](tc.maintainers),
+				members:    sets.KeySet[string](tc.members),
+				invitees:   sets.KeySet[string](tc.invitees),
+				removed:    sets.Set[string]{},
+				newAdmins:  sets.Set[string]{},
+				newMembers: sets.Set[string]{},
 			}
 
 			opts := root.Options{}
@@ -1226,11 +1226,11 @@ func TestConfigureTeamMembers(t *testing.T) {
 			case tc.err:
 				t.Errorf("Failed to receive error")
 			default:
-				if err := cmpLists(tc.remove.List(), fc.removed.List()); err != nil {
+				if err := cmpLists(sets.List(tc.remove), sets.List(fc.removed)); err != nil {
 					t.Errorf("Wrong users removed: %v", err)
-				} else if err := cmpLists(tc.addMembers.List(), fc.newMembers.List()); err != nil {
+				} else if err := cmpLists(sets.List(tc.addMembers), sets.List(fc.newMembers)); err != nil {
 					t.Errorf("Wrong members added: %v", err)
-				} else if err := cmpLists(tc.addMaintainers.List(), fc.newAdmins.List()); err != nil {
+				} else if err := cmpLists(sets.List(tc.addMaintainers), sets.List(fc.newAdmins)); err != nil {
 					t.Errorf("Wrong admins added: %v", err)
 				}
 			}
@@ -2061,30 +2061,30 @@ func TestOrgInvitations(t *testing.T) {
 	cases := []struct {
 		name     string
 		opt      root.Options
-		invitees sets.String // overrides
-		expected sets.String
+		invitees sets.Set[string] // overrides
+		expected sets.Set[string]
 		err      bool
 	}{
 		{
 			name:     "do not call on empty options",
-			invitees: sets.NewString("him", "her", "them"),
-			expected: sets.String{},
+			invitees: sets.New[string]("him", "her", "them"),
+			expected: sets.Set[string]{},
 		},
 		{
 			name: "call if FixOrgMembers",
 			opt: root.Options{
 				FixOrgMembers: true,
 			},
-			invitees: sets.NewString("him", "her", "them"),
-			expected: sets.NewString("him", "her", "them"),
+			invitees: sets.New[string]("him", "her", "them"),
+			expected: sets.New[string]("him", "her", "them"),
 		},
 		{
 			name: "call if FixTeamMembers",
 			opt: root.Options{
 				FixTeamMembers: true,
 			},
-			invitees: sets.NewString("him", "her", "them"),
-			expected: sets.NewString("him", "her", "them"),
+			invitees: sets.New[string]("him", "her", "them"),
+			expected: sets.New[string]("him", "her", "them"),
 		},
 		{
 			name: "ensure case normalization",
@@ -2092,8 +2092,8 @@ func TestOrgInvitations(t *testing.T) {
 				FixOrgMembers:  true,
 				FixTeamMembers: true,
 			},
-			invitees: sets.NewString("MiXeD", "lower", "UPPER"),
-			expected: sets.NewString("mixed", "lower", "upper"),
+			invitees: sets.New[string]("MiXeD", "lower", "UPPER"),
+			expected: sets.New[string]("mixed", "lower", "upper"),
 		},
 		{
 			name: "error if list fails",
@@ -2101,7 +2101,7 @@ func TestOrgInvitations(t *testing.T) {
 				FixTeamMembers: true,
 				FixOrgMembers:  true,
 			},
-			invitees: sets.NewString("erick", "fail"),
+			invitees: sets.New[string]("erick", "fail"),
 			err:      true,
 		},
 	}

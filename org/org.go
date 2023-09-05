@@ -145,8 +145,8 @@ func updateBool(have, want *bool) bool {
 	return true
 }
 
-func normalize(s sets.String) sets.String {
-	out := sets.String{}
+func normalize(s sets.Set[string]) sets.Set[string] {
+	out := sets.Set[string]{}
 	for i := range s {
 		out.Insert(github.NormLogin(i))
 	}
