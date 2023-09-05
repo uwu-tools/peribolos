@@ -57,6 +57,10 @@ func (fm FlagMap) Set(s string) error {
 	return nil
 }
 
+func (fm FlagMap) Type() string {
+	return "Type() is not implemented"
+}
+
 func UnmarshalPathToOrgConfig(path string) (*org.Config, error) {
 	buf, err := os.ReadFile(path)
 	if err != nil {

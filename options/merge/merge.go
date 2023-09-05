@@ -25,18 +25,19 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 
+	"github.com/uwu-tools/peribolos/internal/helpers"
 	"github.com/uwu-tools/peribolos/internal/yaml"
 )
 
 type Options struct {
-	Orgs        flagMap
+	Orgs        helpers.FlagMap
 	MergeTeams  bool
 	IgnoreTeams bool
 }
 
 func NewOptions() *Options {
 	o := &Options{
-		Orgs: flagMap{},
+		Orgs: helpers.FlagMap{},
 	}
 
 	return o

@@ -17,39 +17,9 @@ limitations under the License.
 package merge
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
-
-type flagMap map[string]string
-
-func (fm flagMap) String() string {
-	var parts []string
-	for key, value := range fm {
-		if value == "" {
-			parts = append(parts, key)
-			continue
-		}
-		parts = append(parts, key+"="+value)
-	}
-	return strings.Join(parts, ",")
-}
-
-func (fm flagMap) Set(s string) error {
-	k, v := parseKeyValue(s)
-	if _, present := fm[k]; present {
-		return fmt.Errorf("duplicate key: %s", k)
-	}
-	fm[k] = v
-	return nil
-}
-
-func (fm flagMap) Type() string {
-	return "Type() is not implemented"
-}
 
 // AddFlags adds this options' flags to the cobra command.
 func (o *Options) AddFlags(cmd *cobra.Command) {
@@ -77,12 +47,4 @@ func (o *Options) AddFlags(cmd *cobra.Command) {
 		logrus.Print("Extra", a)
 		_ = o.Orgs.Set(a)
 	}
-}
-
-func parseKeyValue(s string) (string, string) {
-	p := strings.SplitN(s, "=", 2)
-	if len(p) == 1 {
-		return p[0], ""
-	}
-	return p[0], p[1]
 }
