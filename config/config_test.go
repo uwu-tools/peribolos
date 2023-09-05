@@ -91,10 +91,10 @@ func loadOrg(dir string) (*org.Config, error) {
 	return &cfg, nil
 }
 
-func testDuplicates(list sets.String) error {
-	found := sets.String{}
-	dups := sets.String{}
-	all := list.List()
+func testDuplicates(list sets.Set[string]) error {
+	found := sets.Set[string]{}
+	dups := sets.Set[string]{}
+	all := sets.List(list)
 	for _, i := range all {
 		if found.Has(i) {
 			dups.Insert(i)
@@ -102,7 +102,7 @@ func testDuplicates(list sets.String) error {
 		found.Insert(i)
 	}
 	if n := len(dups); n > 0 {
-		return fmt.Errorf("%d duplicate names: %s", n, strings.Join(dups.List(), ", "))
+		return fmt.Errorf("%d duplicate names: %s", n, strings.Join(sets.List(dups), ", "))
 	}
 	return nil
 }
@@ -116,8 +116,8 @@ func isSorted(list []string) bool {
 	return sort.StringsAreSorted(items)
 }
 
-func normalize(s sets.String) sets.String {
-	out := sets.String{}
+func normalize(s sets.Set[string]) sets.Set[string] {
+	out := sets.Set[string]{}
 	for i := range s {
 		out.Insert(github.NormLogin(i))
 	}
@@ -126,11 +126,11 @@ func normalize(s sets.String) sets.String {
 
 // testTeamMembers ensures that a user is not a maintainer and member at the same time,
 // there are no duplicate names in the list and all users are org members.
-func testTeamMembers(teams map[string]org.Team, admins sets.String, orgMembers sets.String, orgName string) []error {
+func testTeamMembers(teams map[string]org.Team, admins sets.Set[string], orgMembers sets.Set[string], orgName string) []error {
 	var errs []error
 	for teamName, team := range teams {
-		teamMaintainers := sets.NewString(team.Maintainers...)
-		teamMembers := sets.NewString(team.Members...)
+		teamMaintainers := sets.New[string](team.Maintainers...)
+		teamMembers := sets.New[string](team.Members...)
 
 		teamMaintainers = normalize(teamMaintainers)
 		teamMembers = normalize(teamMembers)
@@ -142,12 +142,12 @@ func testTeamMembers(teams map[string]org.Team, admins sets.String, orgMembers s
 
 		// check for non-admins in maintainers list
 		if nonAdminMaintainers := teamMaintainers.Difference(admins); len(nonAdminMaintainers) > 0 {
-			errs = append(errs, fmt.Errorf("The team %s in org %s has non-admins listed as maintainers; these users should be in the members list instead: %s", teamName, orgName, strings.Join(nonAdminMaintainers.List(), ",")))
+			errs = append(errs, fmt.Errorf("The team %s in org %s has non-admins listed as maintainers; these users should be in the members list instead: %s", teamName, orgName, strings.Join(sets.List(nonAdminMaintainers), ",")))
 		}
 
 		// check for users in both maintainers and members
 		if both := teamMaintainers.Intersection(teamMembers); len(both) > 0 {
-			errs = append(errs, fmt.Errorf("The team %s in org %s has users in both maintainer admin and member roles: %s", teamName, orgName, strings.Join(both.List(), ", ")))
+			errs = append(errs, fmt.Errorf("The team %s in org %s has users in both maintainer admin and member roles: %s", teamName, orgName, strings.Join(sets.List(both), ", ")))
 		}
 
 		// check for duplicates
@@ -160,12 +160,12 @@ func testTeamMembers(teams map[string]org.Team, admins sets.String, orgMembers s
 
 		// check if all are org members
 		if missing := teamMembers.Difference(orgMembers); len(missing) > 0 {
-			errs = append(errs, fmt.Errorf("The following members of team %s are not %s org members: %s", teamName, orgName, strings.Join(missing.List(), ", ")))
+			errs = append(errs, fmt.Errorf("The following members of team %s are not %s org members: %s", teamName, orgName, strings.Join(sets.List(missing), ", ")))
 		}
 
 		// check if admins are a regular member of team
 		if adminTeamMembers := teamMembers.Intersection(admins); len(adminTeamMembers) > 0 {
-			errs = append(errs, fmt.Errorf("The team %s in org %s has org admins listed as members; these users should be in the maintainers list instead, and cannot be on the members list: %s", teamName, orgName, strings.Join(adminTeamMembers.List(), ", ")))
+			errs = append(errs, fmt.Errorf("The team %s in org %s has org admins listed as members; these users should be in the maintainers list instead, and cannot be on the members list: %s", teamName, orgName, strings.Join(sets.List(adminTeamMembers), ", ")))
 		}
 
 		// check if lists are sorted
@@ -194,12 +194,12 @@ func testOrg(targetDir string, t *testing.T) {
 		t.Fatalf("failed to load OWNERS: %v", err)
 	}
 
-	members := normalize(sets.NewString(cfg.Members...))
-	admins := normalize(sets.NewString(cfg.Admins...))
+	members := normalize(sets.New[string](cfg.Members...))
+	admins := normalize(sets.New[string](cfg.Admins...))
 	allOrgMembers := members.Union(admins)
 
-	reviewers := normalize(sets.NewString(own.Reviewers...))
-	approvers := normalize(sets.NewString(own.Approvers...))
+	reviewers := normalize(sets.New[string](own.Reviewers...))
+	approvers := normalize(sets.New[string](own.Approvers...))
 
 	if n := len(approvers); n < 5 {
 		t.Errorf("Require at least 5 approvers, found %d: %s", n, strings.Join(approvers.List(), ", "))
@@ -245,8 +245,8 @@ func TestAllOrgs(t *testing.T) {
 	}
 
 	for _, org := range cfg.Orgs {
-		members := normalize(sets.NewString(org.Members...))
-		admins := normalize(sets.NewString(org.Admins...))
+		members := normalize(sets.New[string](org.Members...))
+		admins := normalize(sets.New[string](org.Admins...))
 		allOrgMembers := members.Union(admins)
 
 		if both := admins.Intersection(members); len(both) > 0 {

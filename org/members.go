@@ -33,8 +33,8 @@ type inviteClient interface {
 	ListOrgInvitations(org string) ([]github.OrgInvitation, error)
 }
 
-func orgInvitations(opt root.Options, client inviteClient, orgName string) (sets.String, error) {
-	invitees := sets.String{}
+func orgInvitations(opt root.Options, client inviteClient, orgName string) (sets.Set[string], error) {
+	invitees := sets.Set[string]{}
 	if (!opt.FixOrgMembers && !opt.FixTeamMembers) || opt.IgnoreInvitees {
 		return invitees, nil
 	}
@@ -58,10 +58,10 @@ type orgClient interface {
 	UpdateOrgMembership(org, user string, admin bool) (*github.OrgMembership, error)
 }
 
-func configureOrgMembers(opt root.Options, client orgClient, orgName string, orgConfig org.Config, invitees sets.String) error {
+func configureOrgMembers(opt root.Options, client orgClient, orgName string, orgConfig org.Config, invitees sets.Set[string]) error {
 	// Get desired state
-	wantAdmins := sets.NewString(orgConfig.Admins...)
-	wantMembers := sets.NewString(orgConfig.Members...)
+	wantAdmins := sets.New[string](orgConfig.Admins...)
+	wantMembers := sets.New[string](orgConfig.Members...)
 
 	// Sanity desired state
 	if n := len(wantAdmins); n < opt.MinAdmins {
@@ -85,8 +85,8 @@ func configureOrgMembers(opt root.Options, client orgClient, orgName string, org
 	}
 
 	// Get current state
-	haveAdmins := sets.String{}
-	haveMembers := sets.String{}
+	haveAdmins := sets.Set[string]{}
+	haveMembers := sets.Set[string]{}
 	ms, err := client.ListOrgMembers(orgName, github.RoleAdmin)
 	if err != nil {
 		return fmt.Errorf("failed to list %s admins: %w", orgName, err)
@@ -113,9 +113,9 @@ func configureOrgMembers(opt root.Options, client orgClient, orgName string, org
 		return fmt.Errorf("cannot delete %d memberships or %.3f of %s (exceeds limit of %.3f)", len(remove), d, orgName, opt.MaxDelta)
 	}
 
-	teamMembers := sets.String{}
-	teamNames := sets.String{}
-	duplicateTeamNames := sets.String{}
+	teamMembers := sets.Set[string]{}
+	teamNames := sets.Set[string]{}
+	duplicateTeamNames := sets.Set[string]{}
 	for name, team := range orgConfig.Teams {
 		teamMembers.Insert(team.Members...)
 		teamMembers.Insert(team.Maintainers...)
@@ -133,11 +133,11 @@ func configureOrgMembers(opt root.Options, client orgClient, orgName string, org
 
 	teamMembers = normalize(teamMembers)
 	if outside := teamMembers.Difference(want.all()); len(outside) > 0 {
-		return fmt.Errorf("all team members/maintainers must also be org members: %s", strings.Join(outside.List(), ", "))
+		return fmt.Errorf("all team members/maintainers must also be org members: %s", strings.Join(sets.List(outside), ", "))
 	}
 
 	if n := len(duplicateTeamNames); n > 0 {
-		return fmt.Errorf("team names must be unique (including previous names), %d duplicated names: %s", n, strings.Join(duplicateTeamNames.List(), ", "))
+		return fmt.Errorf("team names must be unique (including previous names), %d duplicated names: %s", n, strings.Join(sets.List(duplicateTeamNames), ", "))
 	}
 
 	adder := func(user string, super bool) error {
@@ -177,11 +177,11 @@ func configureOrgMembers(opt root.Options, client orgClient, orgName string, org
 }
 
 type memberships struct {
-	members sets.String
-	super   sets.String
+	members sets.Set[string]
+	super   sets.Set[string]
 }
 
-func (m memberships) all() sets.String {
+func (m memberships) all() sets.Set[string] {
 	return m.members.Union(m.super)
 }
 
@@ -190,11 +190,11 @@ func (m *memberships) normalize() {
 	m.super = normalize(m.super)
 }
 
-func configureMembers(have, want memberships, invitees sets.String, adder func(user string, super bool) error, remover func(user string) error) error {
+func configureMembers(have, want memberships, invitees sets.Set[string], adder func(user string, super bool) error, remover func(user string) error) error {
 	have.normalize()
 	want.normalize()
 	if both := want.super.Intersection(want.members); len(both) > 0 {
-		return fmt.Errorf("users in both roles: %s", strings.Join(both.List(), ", "))
+		return fmt.Errorf("users in both roles: %s", strings.Join(sets.List(both), ", "))
 	}
 	havePlusInvites := have.all().Union(invitees)
 	remove := havePlusInvites.Difference(want.all())
