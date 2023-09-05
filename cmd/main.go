@@ -25,8 +25,8 @@ import (
 	"github.com/spf13/cobra"
 	proworg "github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 	"sigs.k8s.io/release-utils/version"
-	"sigs.k8s.io/yaml"
 
+	"github.com/uwu-tools/peribolos/internal/yaml"
 	"github.com/uwu-tools/peribolos/options/merge"
 	"github.com/uwu-tools/peribolos/options/root"
 	"github.com/uwu-tools/peribolos/org"

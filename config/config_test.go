@@ -23,10 +23,11 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ghodss/yaml"
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
 	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
 	"k8s.io/apimachinery/pkg/util/sets"
+
+	"github.com/uwu-tools/peribolos/internal/yaml"
 )
 
 // TODO(config): Fix tests
