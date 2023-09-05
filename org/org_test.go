@@ -1129,6 +1129,7 @@ func TestConfigureTeamMembers(t *testing.T) {
 		remove         sets.String
 		addMembers     sets.String
 		addMaintainers sets.String
+		ignoreInvitees bool
 		invitees       sets.String
 		team           org.Team
 		slug           string
@@ -1181,6 +1182,19 @@ func TestConfigureTeamMembers(t *testing.T) {
 			invitees:    sets.NewString("invited-member"),
 			remove:      sets.String{},
 		},
+		{
+			name: "ignore invitees",
+			team: org.Team{
+				Maintainers: []string{"keep-maintainer"},
+				Members:     []string{"keep-member", "new-member"},
+			},
+			maintainers:    sets.NewString("keep-maintainer"),
+			members:        sets.NewString("keep-member"),
+			invitees:       sets.String{},
+			remove:         sets.String{},
+			addMembers:     sets.NewString("new-member"),
+			ignoreInvitees: true,
+		},
 	}
 
 	for _, tc := range cases {
@@ -1203,7 +1217,7 @@ func TestConfigureTeamMembers(t *testing.T) {
 
 			opts := root.Options{}
 
-			err := configureTeamMembers(opts, fc, "", gt, tc.team, false)
+			err := configureTeamMembers(opts, fc, "", gt, tc.team, tc.ignoreInvitees)
 			switch {
 			case err != nil:
 				if !tc.err {
