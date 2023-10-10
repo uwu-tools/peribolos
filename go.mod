@@ -26,7 +26,7 @@ require (
 	golang.org/x/sync v0.4.0
 	k8s.io/apimachinery v0.28.2
 	k8s.io/utils v0.0.0-20230406110748-d93618cff8a2
-	sigs.k8s.io/release-utils v0.7.4
+	sigs.k8s.io/release-utils v0.7.5
 	sigs.k8s.io/yaml v1.3.0
 )
 
