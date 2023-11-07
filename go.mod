@@ -20,7 +20,7 @@ require (
 	github.com/sethvargo/go-githubactions v1.1.0
 	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.7.0
+	github.com/spf13/cobra v1.8.0
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/oauth2 v0.13.0
 	golang.org/x/sync v0.5.0
