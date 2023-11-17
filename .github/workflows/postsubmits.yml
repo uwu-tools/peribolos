@@ -21,7 +21,7 @@ jobs:
       - name: set token
         run: echo ${{ secrets.AUGGIE_BOT_TOKEN }} > token
       - name: peribolos dry-run
-        uses: docker://ghcr.io/uwu-tools/peribolos@sha256:3771027ce98f3dcb74b22ce8bcfbde219738fa2cd021fb10c52b42befbcfe08e # v0.0.1
+        uses: docker://ghcr.io/uwu-tools/peribolos:v0.0.6@sha256:4687aa8da44589ac0f1de4ec794f670edb8c19d4d596024c97eaaf8d85328881
         with:
           github-token-path: ./token
           config-path: config
