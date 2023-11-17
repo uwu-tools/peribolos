@@ -1,0 +1,9 @@
+teams:
+  org-admins:
+    description: ""
+    maintainers:
+      - justaugustus
+      - cpanato
+      - detiber
+    members:
+    privacy: closed

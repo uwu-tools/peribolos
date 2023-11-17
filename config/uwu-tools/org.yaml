@@ -1,8 +1,9 @@
 admins:
-- auggie-bot
-- cpanato
-- justaugustus
-- sethmccombs
+  - auggie-bot
+  - cpanato
+  - detiber
+  - justaugustus
+  - sethmccombs
 billing_email: foo@auggie.dev
 company: ""
 default_repository_permission: read
@@ -12,6 +13,8 @@ has_organization_projects: true
 has_repository_projects: true
 location: ""
 members:
-- detiber
+  - lgecse
+  - matewolf
+  - rappizs
 members_can_create_repositories: true
 name: ""

@@ -2,18 +2,28 @@ teams:
   gh-jira-issue-sync-admins:
     description: ""
     maintainers:
-    - justaugustus
+      - justaugustus
     members:
-    - detiber
+      - detiber
     privacy: closed
     repos:
       gh-jira-issue-sync: admin
   gh-jira-issue-sync-maintainers:
     description: ""
     maintainers:
-    - justaugustus
+      - justaugustus
     members:
-    - detiber
+      - detiber
+    privacy: closed
+    repos:
+      gh-jira-issue-sync: maintain
+  gh-jira-issue-sync-triagers:
+    description: ""
+    maintainers:
+    members:
+      - lgecse
+      - matewolf
+      - rappizs
     privacy: closed
     repos:
       gh-jira-issue-sync: maintain
