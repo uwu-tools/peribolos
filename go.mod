@@ -23,7 +23,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/oauth2 v0.15.0
-	golang.org/x/sync v0.5.0
+	golang.org/x/sync v0.6.0
 	k8s.io/apimachinery v0.29.0
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b
 	sigs.k8s.io/release-utils v0.7.7
