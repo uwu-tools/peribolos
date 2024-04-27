@@ -25,7 +25,7 @@ import (
 	"github.com/caarlos0/env/v7"
 	actions "github.com/sethvargo/go-githubactions"
 	"github.com/sirupsen/logrus"
-	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/flagutil"
+	"sigs.k8s.io/prow/pkg/flagutil"
 )
 
 const (
