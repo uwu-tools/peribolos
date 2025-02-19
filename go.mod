@@ -16,7 +16,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc
 	github.com/peterbourgon/diskv v2.0.1+incompatible
-	github.com/prometheus/client_golang v1.20.5
+	github.com/prometheus/client_golang v1.21.0
 	github.com/sethvargo/go-githubactions v1.3.0
 	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
 	github.com/sirupsen/logrus v1.9.3
@@ -62,7 +62,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
-	github.com/prometheus/common v0.55.0 // indirect
+	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
@@ -75,7 +75,7 @@ require (
 	golang.org/x/text v0.21.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
-	google.golang.org/protobuf v1.34.2 // indirect
+	google.golang.org/protobuf v1.36.1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
