@@ -1,6 +1,7 @@
 module github.com/uwu-tools/peribolos
 
 go 1.23
+toolchain go1.24.1
 
 // Upstream is unmaintained. This fork introduces two important changes:
 // - We log an error if writing a cache key fails e.g., because disk is full
@@ -69,10 +70,10 @@ require (
 	github.com/xanzy/go-gitlab v0.90.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	go.uber.org/zap v1.25.0 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
