@@ -23,7 +23,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.9.1
 	go4.org v0.0.0-20230225012048-214862532bf5
-	golang.org/x/oauth2 v0.26.0
+	golang.org/x/oauth2 v0.29.0
 	golang.org/x/sync v0.11.0
 	k8s.io/apimachinery v0.29.3
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
