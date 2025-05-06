@@ -1,7 +1,8 @@
 module github.com/uwu-tools/peribolos
 
-go 1.23
-toolchain go1.24.1
+go 1.23.0
+
+toolchain go1.24.2
 
 // Upstream is unmaintained. This fork introduces two important changes:
 // - We log an error if writing a cache key fails e.g., because disk is full
