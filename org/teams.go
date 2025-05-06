@@ -340,7 +340,7 @@ func configureTeamMembers(opt root.Options, client teamMembersClient, orgName st
 		if err != nil {
 			// Augment the error with the operation we attempted so that the error makes sense after return
 			err = fmt.Errorf("UpdateTeamMembership(%s(%s), %s, %t) failed: %w", gt.Slug, gt.Name, user, super, err)
-			logrus.Warnf(err.Error())
+			logrus.Warnf("%s", err.Error())
 		} else if tm.State == github.StatePending {
 			logrus.Infof("Invited %s to %s(%s) as a %s", user, gt.Slug, gt.Name, role)
 		} else {
@@ -354,7 +354,7 @@ func configureTeamMembers(opt root.Options, client teamMembersClient, orgName st
 		if err != nil {
 			// Augment the error with the operation we attempted so that the error makes sense after return
 			err = fmt.Errorf("RemoveTeamMembership(%s(%s), %s) failed: %w", gt.Slug, gt.Name, user, err)
-			logrus.Warnf(err.Error())
+			logrus.Warnf("%s", err.Error())
 		} else {
 			logrus.Infof("Removed %s from team %s(%s)", user, gt.Slug, gt.Name)
 		}

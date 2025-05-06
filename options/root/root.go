@@ -17,6 +17,7 @@ limitations under the License.
 package root
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"strconv"
@@ -98,7 +99,7 @@ func new() *Options {
 
 func (o *Options) validateArgsForAction() error {
 	if err := o.GithubOpts.Validate(!o.Confirm); err != nil {
-		return fmt.Errorf(err.Error())
+		return err
 	}
 
 	if o.MinAdmins < 2 {
@@ -118,7 +119,7 @@ func (o *Options) validateArgsForAction() error {
 	}
 
 	if o.Config == "" && o.Dump == "" {
-		return fmt.Errorf("--config-path or --dump required")
+		return errors.New("--config-path or --dump required")
 	}
 
 	if o.Config != "" && o.Dump != "" {
@@ -126,15 +127,15 @@ func (o *Options) validateArgsForAction() error {
 	}
 
 	if o.DumpFull && o.Dump == "" {
-		return fmt.Errorf("--dump-full can't be used without --dump")
+		return errors.New("--dump-full can't be used without --dump")
 	}
 
 	if o.FixTeamMembers && !o.FixTeams {
-		return fmt.Errorf("--fix-team-members requires --fix-teams")
+		return errors.New("--fix-team-members requires --fix-teams")
 	}
 
 	if o.FixTeamRepos && !o.FixTeams {
-		return fmt.Errorf("--fix-team-repos requires --fix-teams")
+		return errors.New("--fix-team-repos requires --fix-teams")
 	}
 
 	level, err := logrus.ParseLevel(o.logLevel)
