@@ -28,7 +28,7 @@ require (
 	golang.org/x/sync v0.16.0
 	k8s.io/apimachinery v0.33.3
 	k8s.io/utils v0.0.0-20241210054802-24370beab758
-	sigs.k8s.io/release-utils v0.11.1
+	sigs.k8s.io/release-utils v0.12.0
 	sigs.k8s.io/yaml v1.5.0
 )
 
@@ -76,8 +76,8 @@ require (
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/sys v0.31.0 // indirect
-	golang.org/x/text v0.23.0 // indirect
+	golang.org/x/sys v0.34.0 // indirect
+	golang.org/x/text v0.27.0 // indirect
 	golang.org/x/time v0.9.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 	google.golang.org/protobuf v1.36.5 // indirect
