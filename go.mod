@@ -22,7 +22,7 @@ require (
 	github.com/sethvargo/go-githubactions v1.3.1
 	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.9.1
+	github.com/spf13/cobra v1.10.1
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sync v0.16.0
@@ -68,7 +68,7 @@ require (
 	github.com/prometheus/common v0.65.0 // indirect
 	github.com/prometheus/procfs v0.16.1 // indirect
 	github.com/shurcooL/graphql v0.0.0-20220606043923-3cf50f8a0a29 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xanzy/go-gitlab v0.90.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
