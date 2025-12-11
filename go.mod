@@ -19,7 +19,7 @@ require (
 	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc
 	github.com/peterbourgon/diskv v2.0.1+incompatible
 	github.com/prometheus/client_golang v1.23.2
-	github.com/sethvargo/go-githubactions v1.3.1
+	github.com/sethvargo/go-githubactions v1.3.2
 	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.10.1
