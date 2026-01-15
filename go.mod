@@ -21,7 +21,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/sethvargo/go-githubactions v1.3.1
 	github.com/shurcooL/githubv4 v0.0.0-20230305132112-efb623903184
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.1
 	go4.org v0.0.0-20230225012048-214862532bf5
 	golang.org/x/oauth2 v0.34.0
