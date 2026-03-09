@@ -1,8 +1,6 @@
 module github.com/uwu-tools/peribolos
 
-go 1.24.0
-
-toolchain go1.24.2
+go 1.25.0
 
 // Upstream is unmaintained. This fork introduces two important changes:
 // - We log an error if writing a cache key fails e.g., because disk is full
@@ -24,7 +22,7 @@ require (
 	github.com/sirupsen/logrus v1.9.4
 	github.com/spf13/cobra v1.10.2
 	go4.org v0.0.0-20230225012048-214862532bf5
-	golang.org/x/oauth2 v0.35.0
+	golang.org/x/oauth2 v0.36.0
 	golang.org/x/sync v0.19.0
 	k8s.io/apimachinery v0.34.3
 	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d
