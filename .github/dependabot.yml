@@ -1,17 +1,34 @@
 version: 2
 updates:
-- package-ecosystem: gomod
+- package-ecosystem: "gomod"
   directory: "/"
   schedule:
-    interval: daily
-  labels: []
-  open-pull-requests-limit: 10
+    interval: "weekly"
+  groups:
+    gomod:
+      patterns:
+        - "*"
+      exclude-patterns:
+        - "golang.org/x/*"
+    golang-x:
+      patterns:
+        - "golang.org/x/*"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
-      interval: "daily"
-  labels:
-    - "area/dependency"
-    - "release-note-none"
-    - "ok-to-test"
-  open-pull-requests-limit: 10
+    interval: "weekly"
+  groups:
+    github-actions:
+      patterns:
+        - "*"
+      exclude-patterns:
+        - "actions/*"
+        - "github/*"
+        - "golangci/*"
+    github-owned:
+      patterns:
+        - "actions/*"
+        - "github/*"
+    golangci:
+      patterns:
+        - "golangci/*"
