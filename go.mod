@@ -2,11 +2,6 @@ module github.com/uwu-tools/peribolos
 
 go 1.25.8
 
-// Upstream is unmaintained. This fork introduces two important changes:
-// - We log an error if writing a cache key fails e.g., because disk is full
-// - We inject a header that allows ghproxy to detect if the response was revalidated or a cache miss
-replace github.com/gregjones/httpcache => github.com/alvaroaleman/httpcache v0.0.0-20210618195546-ab9a1a3f8a38
-
 require (
 	github.com/bmatcuk/doublestar/v4 v4.10.0
 	github.com/caarlos0/env/v7 v7.1.0
