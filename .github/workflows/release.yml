@@ -7,6 +7,8 @@ on:
     tags:
       - v*
 
+permissions: read-all
+
 env:
   COSIGN_EXPERIMENTAL: true
 
@@ -26,12 +28,15 @@ jobs:
           egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Go
         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
         with:
           go-version: '1.25'
           check-latest: true
+          cache: false
 
       - name: Install ko
         uses: ko-build/setup-ko@d006021bd0c28d1ce33a07e7943d48b079944c8d # v0.9

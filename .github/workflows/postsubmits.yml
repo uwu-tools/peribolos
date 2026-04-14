@@ -18,6 +18,8 @@ jobs:
           egress-policy: audit # TODO: change to 'egress-policy: block' after couple of runs
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: set token
         run: echo ${{ secrets.AUGGIE_BOT_TOKEN }} > token
       - name: peribolos dry-run
