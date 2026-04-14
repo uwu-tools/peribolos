@@ -21,8 +21,8 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
-	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
-	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
+	"sigs.k8s.io/prow/pkg/config/org"
+	"sigs.k8s.io/prow/pkg/github"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 
 	"github.com/uwu-tools/peribolos/options/root"
