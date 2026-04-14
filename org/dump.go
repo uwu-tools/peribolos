@@ -20,8 +20,8 @@ import (
 	"fmt"
 
 	"github.com/sirupsen/logrus"
-	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/config/org"
-	"github.com/uwu-tools/peribolos/third_party/k8s.io/test-infra/prow/github"
+	"sigs.k8s.io/prow/pkg/config/org"
+	"sigs.k8s.io/prow/pkg/github"
 )
 
 type dumpClient interface {
